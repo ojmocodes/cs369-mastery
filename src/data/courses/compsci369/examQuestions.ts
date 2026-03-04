@@ -1,195 +1,352 @@
-import { ExamQuestion } from '../../../types';
+import type { ExamQuestionText } from '../../../types';
 
-export const examQuestions: ExamQuestion[] = [
-  // ══════════════════════════════════════════════════════════════════
-  // SECTION A – SHORT ANSWER (10 × 3 marks = 30 marks)
-  // ══════════════════════════════════════════════════════════════════
-  {
-    id: 'eq_A1',
-    section: 'A',
-    marks: 3,
-    topic: 'global_alignment',
-    type: 'short',
-    question:
-      'Write the Needleman–Wunsch recurrence for filling cell F(i, j), given a linear gap penalty d and substitution score s(xᵢ, yⱼ). Define each term.',
-    modelAnswer:
-      'F(i,j) = max{ F(i−1,j−1) + s(xᵢ,yⱼ),  F(i−1,j) − d,  F(i,j−1) − d }.\n\n• F(i−1,j−1) + s(xᵢ,yⱼ): align xᵢ with yⱼ (match or mismatch).\n• F(i−1,j) − d: introduce a gap in sequence Y (delete from X).\n• F(i,j−1) − d: introduce a gap in sequence X (insert into X from Y).\nInitialisation: F(0,0)=0, F(i,0)=−id, F(0,j)=−jd. Traceback from F(m,n).',
-    markingGuide: '1 mark: correct three-way max. 1 mark: correct initialisation. 1 mark: identifying traceback start.',
-  },
-  {
-    id: 'eq_A2',
-    section: 'A',
-    marks: 3,
-    topic: 'jukes_cantor',
-    type: 'short',
-    question:
-      'Derive the Jukes–Cantor distance formula. State the key assumption and show how you correct for multiple hits.',
-    modelAnswer:
-      'JC assumes equal base frequencies and a single rate α for all substitutions.\nLet p = observed proportion of differing sites.\nThe expected proportion evolving under JC: p(t) = ¾(1 − e^{−4αt/3}).\nSolving for t (or equivalently d = 2αt per branch, total d = expected substitutions per site):\nd = −(3/4) ln(1 − 4p/3).\nAs p→3/4 the correction → ∞ (saturation). The log corrects for multiple hits at the same site.',
-    markingGuide: '1 mark: stating JC assumptions. 1 mark: correct formula. 1 mark: interpreting saturation / multiple hits.',
-  },
-  {
-    id: 'eq_A3',
-    section: 'A',
-    marks: 3,
-    topic: 'hmm_basics',
-    type: 'short',
-    question:
-      'Explain the difference between the Viterbi algorithm and the Forward algorithm for an HMM. When would you prefer each?',
-    modelAnswer:
-      'Viterbi: finds the single most probable hidden state sequence (Viterbi path) using max instead of sum. Runs in O(T·K²).\nForward: computes the total probability of the observation sequence P(O|λ) by summing over ALL hidden paths. Same complexity.\nUse Viterbi when you need the best annotation/segmentation (e.g. gene prediction).\nUse Forward (or Forward–Backward) when you need posterior state probabilities or to train with Baum–Welch.',
-    markingGuide: '1 mark: max vs sum distinction. 1 mark: what each computes. 1 mark: appropriate use case for each.',
-  },
-  {
-    id: 'eq_A4',
-    section: 'A',
-    marks: 3,
-    topic: 'markov_chains',
-    type: 'short',
-    question:
-      'Define the stationary distribution of a Markov chain. How is detailed balance (reversibility) related to stationarity?',
-    modelAnswer:
-      'A distribution π is stationary if πP = π (for row-vector π and transition matrix P).\nDetailed balance: πᵢ Pᵢⱼ = πⱼ Pⱼᵢ for all i,j. This is a stronger condition than stationarity.\nIf detailed balance holds, summing over j: Σⱼ πᵢ Pᵢⱼ = Σⱼ πⱼ Pⱼᵢ → πᵢ = (πP)ᵢ, so the chain is stationary.\nDetailed balance ⟹ stationarity; the converse is not generally true.\nTime-reversible substitution models (e.g. GTR) use detailed balance to guarantee stationarity.',
-    markingGuide: '1 mark: correct πP=π. 1 mark: detailed balance equation. 1 mark: implication direction (DB⟹stationary, not vice versa).',
-  },
-  {
-    id: 'eq_A5',
-    section: 'A',
-    marks: 3,
-    topic: 'tree_concepts',
-    type: 'short',
-    question:
-      'Explain why the number of possible unrooted tree topologies grows super-exponentially with the number of taxa, and give the formula.',
-    modelAnswer:
-      'Each new taxon can be attached to any of the existing branches. For n taxa, #unrooted bifurcating trees = (2n−5)!! = 1×3×5×…×(2n−5) for n≥3.\nn=4: 3 trees. n=10: 2,027,025. n=20: ~2.2×10²⁰.\nThis explosive growth means exhaustive search over topologies is infeasible for n≳10; heuristic search (SPR/TBR moves) is required.',
-    markingGuide: '1 mark: correct formula (2n−5)!!. 1 mark: correct value for n=4 or n=5. 1 mark: heuristic implication.',
-  },
-  {
-    id: 'eq_A6',
-    section: 'A',
-    marks: 3,
-    topic: 'selection',
-    type: 'short',
-    question:
-      'Define synonymous and non-synonymous substitutions. How is dN/dS (ω) used to detect positive selection?',
-    modelAnswer:
-      'Synonymous (dS): nucleotide change that does not alter the amino acid (silent). Non-synonymous (dN): changes the amino acid.\nω = dN/dS. Under neutrality ω=1. Purifying selection → ω<1 (amino-acid changes removed). Positive selection → ω>1 (changes favoured).\nTo detect positive selection: fit models M7 (β distribution, 0<ω<1) vs M8 (+ class with ω>1) using likelihood-ratio test. If M8 is significantly better and ω>1, positive selection is inferred.',
-    markingGuide: '1 mark: correct definitions. 1 mark: ω interpretation. 1 mark: LRT or appropriate test.',
-  },
-  {
-    id: 'eq_A7',
-    section: 'A',
-    marks: 3,
-    topic: 'rna_structure',
-    type: 'short',
-    question:
-      'Describe the Nussinov dynamic programming algorithm for RNA secondary structure prediction. What does it optimise, and what is its time complexity?',
-    modelAnswer:
-      'Nussinov maximises the number of base pairs.\nLet N(i,j) = max base pairs in subsequence [i,j].\nRecurrence:\n  N(i,j) = max{\n    N(i+1,j)        // i unpaired,\n    N(i,j−1)        // j unpaired,\n    N(i+1,j−1)+1   // i–j paired (if complementary),\n    max_{i<k<j} N(i,k) + N(k+1,j) // bifurcation\n  }\nBase case: N(i,i)=0, N(i,j)=0 for i>j.\nTime: O(n³), Space: O(n²). Limitation: no pseudoknots; free energy not considered.',
-    markingGuide: '1 mark: correct objective. 1 mark: correct recurrence (at least 3 cases). 1 mark: O(n³) complexity.',
-  },
-  {
-    id: 'eq_A8',
-    section: 'A',
-    marks: 3,
-    topic: 'coalescent',
-    type: 'short',
-    question:
-      'State the Kingman coalescent rate for k lineages in a population of effective size Nₑ. Derive the expected time to the most recent common ancestor (MRCA) starting from n lineages.',
-    modelAnswer:
-      'Rate for k lineages to coalesce: λₖ = C(k,2)/Nₑ = k(k−1)/(2Nₑ).\nExpected waiting time in state k: E[Tₖ] = 2Nₑ / [k(k−1)].\nExpected TMRCA = Σₖ₌₂ⁿ 2Nₑ/[k(k−1)] = 2Nₑ Σₖ₌₂ⁿ [1/(k−1) − 1/k] (telescoping) = 2Nₑ(1 − 1/n).\nAs n→∞, E[TMRCA] → 2Nₑ (twice the effective population size in generations).',
-    markingGuide: '1 mark: correct λₖ. 1 mark: correct E[Tₖ]. 1 mark: correct TMRCA = 2Nₑ(1−1/n).',
-  },
-  {
-    id: 'eq_A9',
-    section: 'A',
-    marks: 3,
-    topic: 'db_search',
-    type: 'short',
-    question:
-      'Explain how BLAST achieves speed compared to Smith–Waterman, and why this introduces sensitivity trade-offs.',
-    modelAnswer:
-      'BLAST uses a heuristic filter: (1) Index database k-mers; (2) Find high-scoring word pairs (seeds); (3) Extend seeds into high-scoring pairs (HSPs) without gaps; (4) Attempt gapped extension only for promising HSPs.\nSpeed: avoids full O(mn) DP for most sequences by only extending seeds above threshold T.\nTrade-off: short or divergent alignments may lack a high-scoring seed → missed (false negative). Reducing T increases sensitivity but also runtime. Gapless extension misses alignments requiring early gaps.',
-    markingGuide: '1 mark: word/seed-based approach. 1 mark: extension heuristic. 1 mark: sensitivity trade-off.',
-  },
-  {
-    id: 'eq_A10',
-    section: 'A',
-    marks: 3,
-    topic: 'bayesian_phylo',
-    type: 'short',
-    question:
-      'Compare Bayesian phylogenetic inference to maximum likelihood. What additional output does Bayesian analysis provide?',
-    modelAnswer:
-      'ML: finds the single tree topology+parameters maximising P(data|tree,params). Provides a point estimate + bootstrap support.\nBayesian (MCMC): samples trees from the posterior P(tree,params|data) ∝ P(data|tree,params)·P(tree,params).\nAdditional outputs: posterior probabilities on clades (often considered more calibrated than bootstrap), credible intervals on branch lengths and model parameters, marginal model likelihoods for Bayes-factor model selection.\nBayesian supports tend to be higher than bootstrap values for the same clade.',
-    markingGuide: '1 mark: posterior vs likelihood distinction. 1 mark: MCMC sampling. 1 mark: posterior probability + credible intervals.',
+/**
+ * Actual exam question texts for COMPSCI 369.
+ * Keys are question IDs matching the exam_map in tree.ts.
+ */
+export const examQuestionTexts: Record<string, ExamQuestionText> = {
+  // ── 2024 Mid-Semester Test ─────────────────────────────────────
+
+  '2024-test-Q1': {
+    source: '2024 Mid-Semester Test',
+    marks: 5,
+    text: `(a) Consider the function g(x) = x − f(x)/f′(x), which defines Newton's method as a fixed point iteration x_{n+1} = g(x_n).
+
+For a specific f(x), suppose g(x₀) = x₁ and g(x₁) = x₀ — that is, Newton's method cycles between x₀ and x₁ without converging.
+
+(i) Draw a cobweb diagram illustrating this cycle. Label the fixed points of g on your diagram. [3 marks]
+
+(ii) What condition on |g′(x*)| at a fixed point x* of g determines whether Newton's method converges to or diverges from x*? [2 marks]`
   },
 
-  // ══════════════════════════════════════════════════════════════════
-  // SECTION B – CALCULATIONS (3 × 10 marks = 30 marks)
-  // ══════════════════════════════════════════════════════════════════
-  {
-    id: 'eq_B1',
-    section: 'B',
-    marks: 10,
-    topic: 'global_alignment',
-    type: 'calculation',
-    question:
-      'Perform a complete Needleman–Wunsch alignment of sequences X = "ACGT" and Y = "ACT" using match=+1, mismatch=−1, linear gap penalty d=2. Show the full DP matrix, traceback, and state the optimal alignment and score.',
-    modelAnswer:
-      'Matrix (rows = X+gap, cols = Y+gap):\n     -   A   C   T\n-  [ 0  -2  -4  -6]\nA  [-2   1  -1  -3]\nC  [-4  -1   2   0]\nG  [-6  -3   0   1]\nT  [-8  -5  -2   1]\n\nTraceback from F(4,3)=1:\nF(4,3)←F(3,2)=2 via diagonal (T≠T? T=T: +1 → 2+1? No: F(3,2)+s(G,C)... let me restate)\n\nActual fill (match=+1, mm=−1, gap=−2):\nF(1,1)=max(0+1,−2−2,−2−2)=1\nF(1,2)=max(−2−1,1−2,−4−2)=max(−3,−1,−6)=−1\nF(1,3)=max(−4−1,−1−2,−6−2)=max(−5,−3,−8)=−3\nF(2,1)=max(−2−1,−4−2,1−2)=max(−3,−6,−1)=−1\nF(2,2)=max(1+1,−1−2,−1−2)=max(2,−3,−3)=2\nF(2,3)=max(−1−1,2−2,−3−2)=max(−2,0,−5)=0\nF(3,1)=max(−4−1,−6−2,−1−2)=max(−5,−8,−3)=−3\nF(3,2)=max(−1−1,−3−2,2−2)=max(−2,−5,0)=0\nF(3,3)=max(2−1,0−2,0−2)=max(1,−2,−2)=1\nF(4,1)=max(−6−1,−8−2,−3−2)=max(−7,−10,−5)=−5\nF(4,2)=max(−3−1,−5−2? no: F(3,1)−2=−5, F(4,0)−2=−10, F(3,2)−2? ... \nF(4,2)=max(F(3,1)+s(T,C), F(3,2)−2, F(4,1)−2)=max(−3−1,0−2,−5−2)=max(−4,−2,−7)=−2\nF(4,3)=max(F(3,2)+s(T,T), F(3,3)−2, F(4,2)−2)=max(0+1,1−2,−2−2)=max(1,−1,−4)=1\n\nOptimal score = 1.\nTraceback: F(4,3)←F(3,2)+1 (diag, T=T) ← F(2,1) (diag, C≠C→? C=C→ +1) ← F(1,0)\nAlignment:\nX: A C G T\nY: A C - T\nScore: 1+1−2+1=1 ✓',
-    markingGuide: '3 marks: correct DP matrix. 3 marks: correct traceback path. 2 marks: correct alignment. 2 marks: correct score with working.',
-  },
-  {
-    id: 'eq_B2',
-    section: 'B',
-    marks: 10,
-    topic: 'distance_methods',
-    type: 'calculation',
-    question:
-      'Given the following distance matrix for four taxa A, B, C, D, apply the Neighbour-Joining algorithm to construct a tree. Show all Q-matrix calculations and branch length computations.\n\nDistance matrix:\n       A    B    C    D\nA  [  0   5    9   9 ]\nB  [  5   0    10  10]\nC  [  9   10   0   8 ]\nD  [  9   10   8   0 ]',
-    modelAnswer:
-      'Step 1: n=4. Row sums: r(A)=23, r(B)=25, r(C)=27, r(D)=27.\nQ-matrix = (n−2)d(i,j) − r(i) − r(j):\nQ(A,B)=2×5−23−25=10−48=−38\nQ(A,C)=2×9−23−27=18−50=−32\nQ(A,D)=2×9−23−27=−32\nQ(B,C)=2×10−25−27=−32\nQ(B,D)=2×10−25−27=−32\nQ(C,D)=2×8−27−27=16−54=−38\n\nMinimum Q: Q(A,B)=Q(C,D)=−38. Join (A,B) (or (C,D); choose (A,B)).\n\nBranch lengths:\nd(A,u)=d(A,B)/2 + [r(A)−r(B)]/(2(n−2)) = 5/2 + (23−25)/4 = 2.5−0.5 = 2.0\nd(B,u)=5−2.0=3.0\n\nNew node u. New distances:\nd(u,C)=[d(A,C)+d(B,C)−d(A,B)]/2=[9+10−5]/2=7\nd(u,D)=[d(A,D)+d(B,D)−d(A,B)]/2=[9+10−5]/2=7\n\nStep 2: n=3, taxa {u,C,D}. d(u,C)=7, d(u,D)=7, d(C,D)=8.\nr(u)=14, r(C)=15, r(D)=15.\nQ(u,C)=1×7−14−15=−22; Q(u,D)=−22; Q(C,D)=1×8−15−15=−22. All equal; join (C,D).\nd(C,v)=8/2+(15−15)/2=4; d(D,v)=4. d(u,v)=[7+7−8]/2=3.\n\nFinal tree: ((A:2.0,B:3.0):3.0,(C:4.0,D:4.0));',
-    markingGuide: '2 marks: correct Q-matrix. 2 marks: choosing correct pair. 2 marks: branch lengths for step 1. 2 marks: reduced matrix. 2 marks: final tree topology and branch lengths.',
-  },
-  {
-    id: 'eq_B3',
-    section: 'B',
-    marks: 10,
-    topic: 'hmm_basics',
-    type: 'calculation',
-    question:
-      'A 2-state HMM has states F (fair coin) and L (loaded coin). Transition: P(F→F)=0.9, P(L→L)=0.8. Emissions: P(H|F)=0.5, P(H|L)=0.8. Initial: π(F)=π(L)=0.5. Observation: H, H, T.\n(a) Compute the Viterbi path and its probability. (b) Compute P(HHT | model) using the Forward algorithm.',
-    modelAnswer:
-      '(a) Viterbi (log or direct):\nt=1, H:\nδ₁(F)=0.5×0.5=0.25; δ₁(L)=0.5×0.8=0.4\nt=2, H:\nδ₂(F)=max(0.25×0.9, 0.4×0.2)×0.5=max(0.225,0.08)×0.5=0.225×0.5=0.1125\nδ₂(L)=max(0.25×0.1, 0.4×0.8)×0.8=max(0.025,0.32)×0.8=0.32×0.8=0.256\nt=3, T:\nδ₃(F)=max(0.1125×0.9,0.256×0.2)×0.5=max(0.10125,0.0512)×0.5=0.10125×0.5=0.050625\nδ₃(L)=max(0.1125×0.1,0.256×0.8)×0.2=max(0.01125,0.2048)×0.2=0.2048×0.2=0.04096\nViterbi path: F (best at t=3 is F with 0.050625). Traceback: t=3:F←t=2:F←t=1:F. Path: F,F,F. P=0.050625.\n\nWait — recheck t=3 F: came from t=2 F (0.10125>0.0512 ✓). t=2 F came from t=1 F (0.225>0.08 ✓). Path = F,F,F.\n\n(b) Forward:\nα₁(F)=0.25; α₁(L)=0.4\nα₂(F)=(0.25×0.9+0.4×0.2)×0.5=(0.225+0.08)×0.5=0.1525\nα₂(L)=(0.25×0.1+0.4×0.8)×0.8=(0.025+0.32)×0.8=0.276\nα₃(F)=(0.1525×0.9+0.276×0.2)×0.5=(0.13725+0.0552)×0.5=0.09623\nα₃(L)=(0.1525×0.1+0.276×0.8)×0.2=(0.01525+0.2208)×0.2=0.04721\nP(HHT|model)=0.09623+0.04721=0.14344',
-    markingGuide: '2 marks: correct δ₁. 3 marks: correct δ₂,δ₃ and traceback. 2 marks: correct α₁,α₂. 2 marks: correct α₃. 1 mark: final sum.',
+  '2024-test-Q2': {
+    source: '2024 Mid-Semester Test',
+    marks: 7,
+    text: `(a) Derive Newton's method for solving f(x) = 0.
+
+Starting from the Taylor series f(x_n + h) ≈ f(x_n) + h f′(x_n), derive the update formula x_{n+1} = x_n − f(x_n)/f′(x_n). [3 marks]
+
+(b) Show that Newton's method is a fixed point iteration x_{n+1} = g(x_n) for a function g(x). What are the fixed points of g in terms of f? [2 marks]
+
+(c) Find the fixed points of g(x) = x − (x² − 3)/(2x) and determine their stability. [2 marks]`
   },
 
-  // ══════════════════════════════════════════════════════════════════
-  // SECTION C – ESSAY (2 × 15 marks = 30 marks)
-  // ══════════════════════════════════════════════════════════════════
-  {
-    id: 'eq_C1',
-    section: 'C',
-    marks: 15,
-    topic: 'likelihood_phylo',
-    type: 'essay',
-    question:
-      'Compare maximum parsimony, distance-based (Neighbour-Joining), and maximum likelihood approaches to phylogenetic reconstruction. Discuss the assumptions, strengths, weaknesses, and circumstances under which each is preferred. Your answer should demonstrate understanding of the algorithmic and statistical principles involved.',
-    modelAnswer:
-      'Introduction: Three major paradigms reconstruct evolutionary trees from molecular data.\n\n1. Maximum Parsimony (MP):\nAssumption: Fewest evolutionary changes is the best explanation (Occam\'s razor). No explicit model of evolution.\nAlgorithm: Fitch (unordered) or Sankoff (weighted) DP to count minimum changes per site; sum over parsimony-informative sites; search tree space.\nStrengths: Model-free, fast for small datasets, intuitive, consistent under some conditions.\nWeaknesses: Long-branch attraction (Felsenstein zone: fast-evolving lineages cluster artefactually); not statistically consistent under general models; ignores branch lengths.\nBest when: data are nearly identical, substitution rates are low, or you want a fast initial estimate.\n\n2. Neighbour-Joining (distance):\nAssumption: Converts sequences to pairwise distances using a substitution model; assumes additivity (tree metric).\nAlgorithm: Greedy Q-matrix minimisation O(n³); produces unrooted tree with branch lengths.\nStrengths: Very fast, works for hundreds of taxa, easy to implement, corrected distances improve accuracy.\nWeaknesses: Information loss in collapsing to pairwise distances; UPGMA requires clock; model misspecification in distance calculation propagates; cannot do model comparison.\nBest when: large datasets, quick tree needed, rough topology or guide tree for MSA.\n\n3. Maximum Likelihood (ML):\nAssumption: Explicit substitution model (GTR+Γ+I common); tree topology, branch lengths, and model parameters jointly optimised.\nAlgorithm: Felsenstein pruning computes P(data|tree,params); hill-climb over topology space (SPR/TBR moves); software: RAxML, IQ-TREE.\nStrengths: Statistically consistent and efficient; can incorporate complex models; supports model selection (AIC/BIC); gold standard for accuracy.\nWeaknesses: Computationally expensive O(n·k·L) per tree evaluation; model misspecification still possible; heuristic search may miss global optimum.\nBest when: accuracy is critical, moderate datasets (hundreds of taxa with fast software), hypothesis testing.\n\nConclusion: ML is theoretically optimal but costly; NJ is fast and practical for large data; MP is model-free but prone to LBA. Modern practice uses ML or Bayesian methods with NJ as a starting tree.',
-    markingGuide: '5 marks MP (assumptions 1, algorithm 2, strengths/weaknesses 2). 5 marks NJ (same). 5 marks ML (same). Deduct for missing comparisons.',
+  '2024-test-Q3': {
+    source: '2024 Mid-Semester Test',
+    marks: 9,
+    text: `Consider the initial value problem:
+    dy/dx = −2xy,    y(0) = 1
+
+The exact solution is y(x) = e^{−x²}.
+
+(a) Apply Euler's method with step size h = 0.25 to estimate y(0.25) and y(0.5). Show all calculations. [3 marks]
+
+(b) Apply the fourth-order Runge-Kutta method (RK4) with step size h = 0.5 to estimate y(0.5). Show all four slopes k₁, k₂, k₃, k₄ and the final estimate. [5 marks]
+
+(c) Compare the accuracy of Euler's method and RK4 for this problem. The exact value is y(0.5) = e^{−0.25} ≈ 0.7788. [1 mark]`
   },
-  {
-    id: 'eq_C2',
-    section: 'C',
-    marks: 15,
-    topic: 'hmm_training',
-    type: 'essay',
-    question:
-      'Explain the architecture and training of Profile Hidden Markov Models (Profile HMMs) for protein family modelling. How are they constructed from a multiple sequence alignment, and how are they used for database searching? Compare their sensitivity and specificity to BLAST.',
-    modelAnswer:
-      'Profile HMMs model the conserved structure of a protein family as a probabilistic automaton.\n\nArchitecture:\n• Column-specific states: for each MSA column, three states: Match (Mₖ), Insert (Iₖ), Delete (Dₖ).\n• Match state Mₖ has a 20-dimensional emission distribution (amino acid frequencies at position k).\n• Insert states capture variable-length insertions; delete states allow skipping conserved positions.\n• Transitions between M/I/D encode the gap structure of the family.\n• Result: a left-to-right HMM with a "spine" of match states capturing the family\'s conserved positions.\n\nConstruction from MSA:\n1. Select MSA columns as match states (e.g., <50% gaps).\n2. Count observed amino acids at each column → emission counts.\n3. Add Dirichlet priors (pseudocounts) to handle sparse data and rare residues.\n4. Count transitions between states from alignment paths.\n5. Normalise to probabilities.\nOptionally: use Baum–Welch to refine on unaligned sequences.\n\nDatabase Searching (HMMER):\n• Each database sequence is scored against the profile using the Forward algorithm: log-odds score = log P(seq|profile) / P(seq|background).\n• E-values computed from extreme-value distribution of null model scores.\n• Significant hits are homologues; the profile captures position-specific conservation better than a single consensus.\n\nComparison to BLAST:\n• Sensitivity: Profile HMMs >> BLAST for distant homologues (below ~25% identity). The position-specific emission distributions encode evolutionary conservation far better than BLOSUM62 applied uniformly.\n• Specificity: HMMER achieves similar or better specificity at equivalent sensitivity.\n• Speed: BLAST is faster for single-sequence queries; HMMER3 with probabilistic banding is now competitive.\n• BLAST Profiles (PSI-BLAST) iterate BLAST to build a profile, approximating profile-HMM sensitivity but less principled.\nConclusion: Profile HMMs are the gold standard for protein family modelling, especially for remote homology detection.',
-    markingGuide: '3 marks: architecture (M/I/D states). 3 marks: construction from MSA + priors. 3 marks: database search / scoring. 3 marks: BLAST comparison. 3 marks: sensitivity/specificity discussion with biological context.',
+
+  '2024-test-Q4': {
+    source: '2024 Mid-Semester Test',
+    marks: 5,
+    text: `The Hawk-Dove game models animal conflict over a resource of value V = 6, with injury cost C = 10 for fights between two Hawks.
+
+Payoff rules:
+• Hawk vs Hawk: each gets (V − C)/2
+• Hawk vs Dove: Hawk gets V, Dove gets 0
+• Dove vs Dove: each gets V/2
+
+(a) Write out the 2×2 payoff matrix for this game (rows = focal player, columns = opponent). [2 marks]
+
+(b) Calculate the expected payoff W(H, p) for a Hawk in a population with fraction p of Hawks and (1−p) Doves, and W(D, p) for a Dove. [3 marks]`
   },
-];
+
+  '2024-test-Q5': {
+    source: '2024 Mid-Semester Test',
+    marks: 6,
+    text: `Continuing from Q4 (V = 6, C = 10):
+
+(a) Determine whether pure Hawk (p = 1) is an Evolutionarily Stable Strategy (ESS). Justify your answer using the ESS condition. [2 marks]
+
+(b) Determine whether pure Dove (p = 0) is an ESS. [2 marks]
+
+(c) Find the mixed ESS frequency p* of Hawks. Verify that at p* the payoffs to Hawks and Doves are equal. [2 marks]`
+  },
+
+  '2024-test-Q6': {
+    source: '2024 Mid-Semester Test',
+    marks: 4,
+    text: `Use the Needleman-Wunsch algorithm to globally align the sequences:
+
+    Sequence A:  A C G T
+    Sequence B:  A G T
+
+Using the scoring scheme: match = +1, mismatch = −1, gap penalty = −2.
+
+(a) Fill in the complete DP matrix F(i, j), including initialisation. Show the full matrix. [3 marks]
+
+(b) State the optimal global alignment score (the value at F(4, 3)). [1 mark]`
+  },
+
+  '2024-test-Q7': {
+    source: '2024 Mid-Semester Test',
+    marks: 4,
+    text: `Continuing from Q6:
+
+(a) Perform the traceback to find one optimal global alignment. Write out the aligned sequences with gaps (using − to denote a gap). [2 marks]
+
+(b) Calculate the score of your alignment column by column and verify it matches F(4, 3). [1 mark]
+
+(c) Explain briefly why the traceback starts at F(n, m) rather than at the maximum value in the matrix. [1 mark]`
+  },
+
+  // ── 2025 Final Exam — Section A: Numerical Integration ─────────
+
+  '2025-exam-Q1': {
+    source: '2025 Final Exam — Section A',
+    marks: 5,
+    text: `Apply Newton's method to find the positive root of f(x) = x³ − 2x − 5.
+
+(a) Starting with x₀ = 2, perform 3 iterations of Newton's method. For each step, show f(x_n), f′(x_n), and x_{n+1}. Give answers to 4 decimal places. [4 marks]
+
+(b) Confirm that your final iterate is close to the root by evaluating f(x₃). [1 mark]`
+  },
+
+  '2025-exam-Q2': {
+    source: '2025 Final Exam — Section A',
+    marks: 7,
+    text: `Newton's method for f(x) = 0 is the iteration x_{n+1} = g(x_n) where g(x) = x − f(x)/f′(x).
+
+(a) Show that g′(x*) = 0 at any simple root x* of f (where f(x*) = 0 and f′(x*) ≠ 0). Use the quotient rule to compute g′(x). [3 marks]
+
+(b) What does g′(x*) = 0 imply for the rate of convergence of Newton's method? Compare with a first-order method. [2 marks]
+
+(c) Sketch a cobweb diagram for Newton's method applied to f(x) = x² − 2, starting from x₀ = 2. Show at least 3 iterates and label the fixed point. Describe the qualitative behaviour. [2 marks]`
+  },
+
+  '2025-exam-Q3': {
+    source: '2025 Final Exam — Section A',
+    marks: 10,
+    text: `Consider the IVP:  dy/dx = x² + y²,    y(0) = 0.5,    with step size h = 0.5.
+
+Use the fourth-order Runge-Kutta (RK4) method to estimate y(0.5).
+
+(a) Compute the four slopes:
+    k₁ = f(x₀, y₀)
+    k₂ = f(x₀ + h/2, y₀ + h·k₁/2)
+    k₃ = f(x₀ + h/2, y₀ + h·k₂/2)
+    k₄ = f(x₀ + h, y₀ + h·k₃)
+Show all intermediate calculations. [6 marks]
+
+(b) Compute y₁ = y₀ + (h/6)(k₁ + 2k₂ + 2k₃ + k₄). [2 marks]
+
+(c) Explain why RK4 is preferred over Euler's method for this type of problem. What is the global error order of each method? [2 marks]`
+  },
+
+  '2025-exam-Q4': {
+    source: '2025 Final Exam — Section A',
+    marks: 8,
+    text: `A simplified predator-prey system is:
+    dx/dt = x(1 − y)     (prey x)
+    dy/dt = y(x − 1)     (predator y)
+
+with initial conditions x(0) = 2, y(0) = 2, and step size h = 0.5.
+
+(a) Apply one step of RK4 to this system to estimate (x(0.5), y(0.5)). Compute k₁, k₂, k₃, k₄ for both x and y simultaneously. Show all working. [6 marks]
+
+(b) At the equilibrium point (x*, y*) = (1, 1), what do the equations predict will happen? What does this mean for predator-prey dynamics near this point? [2 marks]`
+  },
+
+  // ── 2025 Final Exam — Section B: Sequence Alignment ────────────
+
+  '2025-exam-Q5': {
+    source: '2025 Final Exam — Section B',
+    marks: 5,
+    text: `Use the Needleman-Wunsch algorithm to globally align:
+
+    Sequence A:  G A T T C A
+    Sequence B:  G T T C
+
+with scoring: match = +2, mismatch = −1, gap penalty = −2.
+
+Fill in the complete DP matrix F(i, j). Initialise the first row and column correctly. Show the complete filled matrix. [5 marks]`
+  },
+
+  '2025-exam-Q6': {
+    source: '2025 Final Exam — Section B',
+    marks: 4,
+    text: `Continuing from Q5:
+
+(a) Perform the traceback to find one optimal global alignment. Write out the aligned sequences with gap characters. [2 marks]
+
+(b) The scoring scheme rewards matches (+2) but penalises both mismatches (−1) and gaps (−2). Explain intuitively why the optimal alignment might introduce a gap rather than a mismatch. [2 marks]`
+  },
+
+  '2025-exam-Q7': {
+    source: '2025 Final Exam — Section B',
+    marks: 4,
+    text: `Affine gap penalties use a gap-open cost d and a gap-extend cost e, with three matrices M, Ix, Iy.
+
+(a) Write the recurrence relation for each of the three matrices M(i,j), Ix(i,j), Iy(i,j) in affine gap alignment. Define what each matrix represents. [3 marks]
+
+(b) A linear gap penalty charges k·d for a gap of length k. An affine penalty charges d + (k−1)·e. For d = 5, e = 1, which is cheaper: one gap of length 4, or four gaps of length 1? Show your calculation. [1 mark]`
+  },
+
+  '2025-exam-Q8': {
+    source: '2025 Final Exam — Section B',
+    marks: 5,
+    text: `Feng-Doolittle progressive alignment is a heuristic for multiple sequence alignment.
+
+(a) Describe the Feng-Doolittle algorithm in 4 steps, starting from a set of k sequences. [3 marks]
+
+(b) What is the "once-a-gap-always-a-gap" rule, and why is it used? [1 mark]
+
+(c) Give one reason why progressive alignment may fail to give the optimal MSA. [1 mark]`
+  },
+
+  // ── 2025 Final Exam — Section C: Simulation & HMMs ─────────────
+
+  '2025-exam-Q9': {
+    source: '2025 Final Exam — Section C',
+    marks: 8,
+    text: `Let X ~ Exponential(λ) with PDF f(x) = λe^{−λx} for x ≥ 0.
+
+(a) Derive the CDF F(x) = P(X ≤ x) by integrating the PDF. [2 marks]
+
+(b) Use the inversion sampling method to show that if U ~ Uniform(0, 1), then
+    X = −ln(U)/λ   follows an Exponential(λ) distribution.
+Show your derivation clearly. [3 marks]
+
+(c) State the memoryless property of the exponential distribution formally as a conditional probability equation. [1 mark]
+
+(d) A Poisson process has rate λ = 2 events per minute. What is the probability that the first event occurs after 30 seconds (0.5 minutes)? [2 marks]`
+  },
+
+  '2025-exam-Q10': {
+    source: '2025 Final Exam — Section C',
+    marks: 9,
+    text: `A Poisson process with rate λ = 3 events per hour models arrivals at a service desk.
+
+(a) Describe an algorithm to simulate arrivals of this Poisson process over a 2-hour period using only a source of Uniform(0,1) random numbers. State clearly what each step computes. [4 marks]
+
+(b) Using the random numbers U₁ = 0.8, U₂ = 0.3, U₃ = 0.6, U₄ = 0.2 (and λ = 3), compute the first four inter-arrival times T_i = −ln(U_i)/λ and the first four arrival times S_i = T₁ + ... + T_i. Give answers to 3 decimal places. [3 marks]
+
+(c) What is the expected number of events in the 2-hour window? What distribution does N(2) follow? [2 marks]`
+  },
+
+  '2025-exam-Q11': {
+    source: '2025 Final Exam — Section C',
+    marks: 12,
+    text: `An HMM has two hidden states {F (fair die), L (loaded die)} and observations {1, 2, 3, 4, 5, 6}.
+
+Parameters:
+• Initial: π_F = 0.5, π_L = 0.5
+• Transitions: a_{FF} = 0.9, a_{FL} = 0.1, a_{LF} = 0.2, a_{LL} = 0.8
+• Emissions (Fair): e_F(1) = e_F(2) = ... = e_F(6) = 1/6
+• Emissions (Loaded): e_L(6) = 1/2, e_L(1) = e_L(2) = e_L(3) = e_L(4) = e_L(5) = 1/10
+
+Observed sequence: x₁ = 3, x₂ = 6, x₃ = 6.
+
+(a) Set up the Viterbi algorithm. Write the recurrence relation and define v_k(i). [2 marks]
+
+(b) Fill in the Viterbi matrix v_k(i) for k ∈ {F, L} and i ∈ {1, 2, 3}. Work in probabilities (not log-space). Show all calculations. [7 marks]
+
+(c) Perform the traceback to find the most likely hidden state sequence. [2 marks]
+
+(d) What is the probability of the most likely path? [1 mark]`
+  },
+
+  '2025-exam-Q12': {
+    source: '2025 Final Exam — Section C',
+    marks: 10,
+    text: `Using the same HMM as Q11 (Fair/Loaded dice model).
+
+(a) Write the Forward recurrence relation and define f_k(i). How does it differ from the Viterbi recurrence? [2 marks]
+
+(b) Fill in the Forward matrix f_k(i) for k ∈ {F, L} and i ∈ {1, 2, 3} for the sequence x₁ = 3, x₂ = 6, x₃ = 6. [6 marks]
+
+(c) Compute P(x₁ = 3, x₂ = 6, x₃ = 6 | model) using the termination step of the Forward algorithm. [2 marks]`
+  },
+
+  // ── 2025 Final Exam — Section D: Trees (Phylogenetics) ──────────
+
+  '2025-exam-Q13': {
+    source: '2025 Final Exam — Section D',
+    marks: 5,
+    text: `Apply UPGMA to the following distance matrix to construct a phylogenetic tree:
+
+         A    B    C    D
+    A  [ 0    5    9   11 ]
+    B  [ 5    0    8    8 ]
+    C  [ 9    8    0    5 ]
+    D  [11    8    5    0 ]
+
+Show all merging steps: at each step identify the minimum distance pair, state the branch lengths, update the distance matrix, and sketch the partial tree. [5 marks]`
+  },
+
+  '2025-exam-Q14': {
+    source: '2025 Final Exam — Section D',
+    marks: 2,
+    text: `(a) UPGMA assumes the molecular clock (ultrametric condition). Draw a 4-taxon unrooted tree with unequal branch lengths that is NOT ultrametric, but where UPGMA would still recover the correct unrooted topology. Briefly explain why UPGMA succeeds on this example. [2 marks]`
+  },
+
+  '2025-exam-Q15': {
+    source: '2025 Final Exam — Section D',
+    marks: 2,
+    text: `Compare UPGMA and Neighbour Joining (NJ) for phylogenetic tree construction.
+
+(a) Name one advantage of NJ over UPGMA. [1 mark]
+
+(b) Name one disadvantage or limitation of NJ compared to model-based methods (such as maximum likelihood). [1 mark]`
+  },
+
+  '2025-exam-Q16': {
+    source: '2025 Final Exam — Section D',
+    marks: 16,
+    text: `Consider 4 aligned sequences (taxa A, B, C, D) with 6 columns:
+
+    Column:  1  2  3  4  5  6
+    A:       G  A  C  T  G  A
+    B:       G  A  C  T  G  G
+    C:       A  G  T  C  G  A
+    D:       A  G  T  C  G  G
+
+(a) For each column, determine whether it is parsimony-informative or uninformative. Justify your answer. [3 marks]
+
+(b) For column 1 only: draw a rooted tree with topology ((A,B),(C,D)) and use the Fitch algorithm to compute the parsimony score. Show the character sets at each internal node. Mark where mutations occur. [3 marks]
+
+(c) There are 3 possible unrooted topologies for 4 taxa. For each topology, compute the total parsimony score over all informative sites. Which topology is the maximum parsimony tree? [5 marks]
+
+(d) For larger datasets (say, 20 taxa), why do we resort to heuristic methods rather than exhaustive search? Give a quantitative justification. [2 marks]
+
+(e) Give two reasons why maximum likelihood is generally preferred over maximum parsimony for phylogenetic inference. [3 marks]`
+  },
+
+  '2025-exam-Q17a': {
+    source: '2025 Final Exam — Section D',
+    marks: 3,
+    text: `Under the Jukes-Cantor (JC69) model with rate parameter μ, the probability that a nucleotide remains unchanged after time t is:
+    P(same | t) = 1/4 + (3/4)·e^{−4μt}
+
+(a) Calculate P(T → C | t = 2, μ = 0.1) — the probability of a transition from T to any different base — and specifically P(T → C). Note: by symmetry in JC69, P(T → C) = P(T → A) = P(T → G) = (1 − P(same))/3. [3 marks]`
+  },
+
+  '2025-exam-Q17b': {
+    source: '2025 Final Exam — Section D',
+    marks: 2,
+    text: `(b) In the JC69 model, the transition matrix P(t) = e^{μQt} depends on the rate μ and time t only through their product μt.
+
+Show why it is impossible to estimate μ and t separately from a single pair of sequences, even with infinite data. What quantity can we estimate, and what is it called? [2 marks]`
+  },
+
+  '2025-exam-Q17c': {
+    source: '2025 Final Exam — Section D',
+    marks: 3,
+    text: `(c) Describe one heuristic strategy used to search for the maximum likelihood (ML) phylogenetic tree.
+
+Specifically:
+• What is the search strategy? (Name it and describe one step.)
+• Why does it not guarantee finding the global ML tree?
+• What is NNI (nearest-neighbour interchange)? [3 marks]`
+  },
+};
