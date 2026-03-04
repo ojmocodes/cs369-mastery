@@ -29,298 +29,868 @@ export const questionBank: Question[] = [
       'Deterministic and continuous',
       'Stochastic and discrete'
     ],
-    correctIndex: 2,
-    explanation: 'Deterministic means no randomness — the future is fully determined by the present state. Continuous means the state variables and time are real-valued rather than taking only discrete steps.'
+    correctIndex: 1,
+    explanation: 'Deterministic means no randomness — given the same initial conditions, the model always produces the same output. Discrete means the system evolves in distinct steps rather than continuously.'
   },
   {
     id: 'cs-3',
     nodeId: 'complex-systems',
-    type: 'multiple-choice',
-    question: 'In a directed network, the in-degree of a node is:',
-    options: [
-      'The number of edges leaving the node',
-      'The total number of edges connected to the node',
-      'The number of edges entering the node',
-      'The shortest path length from the node to all others'
-    ],
-    correctIndex: 2,
-    explanation: 'In a directed graph, edges have a direction. The in-degree counts how many edges point into the node, while the out-degree counts edges pointing out.'
+    type: 'short-answer',
+    question: 'In computational science, what is the term for the philosophical position that a system\'s behaviour can be fully understood by studying its individual parts in isolation?',
+    acceptableAnswers: ['reductionism', 'Reductionism', 'reductionist', 'Reductionist'],
+    explanation: 'Reductionism is the approach of understanding a complex system by reducing it to its fundamental parts. The opposite approach is holism, which argues that systems have properties that cannot be explained by studying components alone.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // discrete-probability (3 questions)
+  // dynamical-systems (3 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'ds-1',
+    nodeId: 'dynamical-systems',
+    type: 'multiple-choice',
+    question: 'For the iteration x_{n+1} = g(x_n), a fixed point x* is stable if:',
+    options: [
+      '|g\'(x*)| > 1',
+      '|g\'(x*)| = 1',
+      '|g\'(x*)| < 1',
+      'g\'(x*) = 0 only'
+    ],
+    correctIndex: 2,
+    explanation: 'A fixed point x* of g(x) is stable (attracting) when |g\'(x*)| < 1. Near x*, small perturbations shrink under iteration. When |g\'(x*)| > 1, perturbations grow and the fixed point is unstable.'
+  },
+  {
+    id: 'ds-2',
+    nodeId: 'dynamical-systems',
+    type: 'calculation',
+    question: 'Consider the logistic map f(x) = rx(1-x) with r = 2.5. Find the non-zero fixed point x* (solve x* = 2.5·x*(1-x*) for x* ≠ 0). Give your answer to 1 decimal place.',
+    correctAnswer: 0.6,
+    tolerance: 0.01,
+    explanation: 'Setting x* = 2.5·x*(1-x*) and dividing by x*: 1 = 2.5(1-x*) → 1/2.5 = 1-x* → x* = 0.6. Stability: f\'(0.6) = 2.5(1-1.2) = -0.5. Since |-0.5| < 1, this fixed point is stable.'
+  },
+  {
+    id: 'ds-3',
+    nodeId: 'dynamical-systems',
+    type: 'multiple-choice',
+    question: 'On a cobweb diagram, which pattern indicates convergence to a stable fixed point?',
+    options: [
+      'A spiral moving outward from the fixed point',
+      'A staircase or spiral moving inward toward the fixed point',
+      'A closed rectangular loop around the fixed point',
+      'A straight line at 45° through the origin'
+    ],
+    correctIndex: 1,
+    explanation: 'In a cobweb diagram we alternate between y=g(x) and y=x. When iterates converge, the cobweb forms an inward spiral or inward staircase. Outward spirals indicate instability.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // fixed-points (3 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'fp-1',
+    nodeId: 'fixed-points',
+    type: 'multiple-choice',
+    question: 'If g\'(x*) = 0 at a fixed point x*, what can we say about convergence?',
+    options: [
+      'Linear convergence (first-order)',
+      'Quadratic convergence (second-order) or higher',
+      'The iteration diverges',
+      'No conclusion can be drawn'
+    ],
+    correctIndex: 1,
+    explanation: 'When g\'(x*) = 0, the iteration is super-linear — at least quadratic convergence. The error satisfies |e_{n+1}| ≈ C|e_n|² or better. Newton\'s method achieves this: its iteration function g(x) = x - f(x)/f\'(x) has g\'(x*) = 0 at simple roots.'
+  },
+  {
+    id: 'fp-2',
+    nodeId: 'fixed-points',
+    type: 'short-answer',
+    question: 'What condition on |g\'(x*)| makes x* an attracting (stable) fixed point for the iteration x_{n+1} = g(x_n)?',
+    acceptableAnswers: ['|g\'(x*)| < 1', 'less than 1', 'strictly less than 1'],
+    explanation: 'The stability condition is |g\'(x*)| < 1. This follows from the linear convergence analysis: near x*, the error e_{n+1} = g(x*+e_n) - g(x*) ≈ g\'(x*)·e_n, so errors shrink iff |g\'(x*)| < 1.'
+  },
+  {
+    id: 'fp-3',
+    nodeId: 'fixed-points',
+    type: 'calculation',
+    question: 'Find the fixed points of g(x) = x² - x + 1. How many real fixed points are there?',
+    correctAnswer: 2,
+    tolerance: 0,
+    explanation: 'Fixed points satisfy g(x*) = x*, so x*² - x* + 1 = x* → x*² - 2x* + 1 = 0 → (x*-1)² = 0 → x* = 1 (a double root). Wait — that\'s 1 fixed point of multiplicity 2. Actually 1 distinct real fixed point. The discriminant of x² - 2x + 1 is 4-4=0, giving exactly 1 real fixed point x* = 1.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // cobweb-diagrams (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'cob-1',
+    nodeId: 'cobweb-diagrams',
+    type: 'multiple-choice',
+    question: 'In a cobweb diagram for g(x) = x/2 + 1 starting from x₀ = 4, what pattern do you expect?',
+    options: [
+      'Outward spiral diverging to infinity',
+      'Monotone staircase converging to the fixed point',
+      'Alternating staircase converging to the fixed point',
+      'Divergence to negative infinity'
+    ],
+    correctIndex: 1,
+    explanation: 'g\'(x) = 1/2 for all x, so g\'(x*) = 1/2 > 0 and |g\'(x*)| = 1/2 < 1. With a positive derivative less than 1, the cobweb forms a monotone inward staircase (approaching from one side only). Alternating oscillation occurs when g\'(x*) < 0.'
+  },
+  {
+    id: 'cob-2',
+    nodeId: 'cobweb-diagrams',
+    type: 'short-answer',
+    question: 'For the cobweb of Newton\'s method applied to f(x) = x² - 2 (finding √2), what is g\'(x*) at the fixed point x* = √2?',
+    acceptableAnswers: ['0', 'zero', '0.0'],
+    explanation: 'Newton\'s iteration: g(x) = x - (x²-2)/(2x) = (x + 2/x)/2. g\'(x) = 1/2 - 1/x². At x* = √2: g\'(√2) = 1/2 - 1/2 = 0. This zero derivative explains Newton\'s quadratic convergence — the cobweb spirals in extremely rapidly.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // newtons-method (4 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'nm-1',
+    nodeId: 'newtons-method',
+    type: 'calculation',
+    question: 'Use Newton\'s method to find √3 by solving f(x) = x² - 3 = 0. Starting from x₀ = 2, compute x₁. Give your answer to 4 decimal places.',
+    correctAnswer: 1.75,
+    tolerance: 0.0001,
+    explanation: 'Newton\'s method: x_{n+1} = x_n - f(x_n)/f\'(x_n). f(x) = x²-3, f\'(x) = 2x.\nx₁ = 2 - (4-3)/4 = 2 - 0.25 = 1.75. (√3 ≈ 1.7321, so already close after one step.)'
+  },
+  {
+    id: 'nm-2',
+    nodeId: 'newtons-method',
+    type: 'multiple-choice',
+    question: 'Newton\'s method can fail to converge when:',
+    options: [
+      'The initial guess is too close to the root',
+      'f\'(x_n) = 0 at some iterate, or the initial guess is in a cycle',
+      'The function has exactly one root',
+      'The function is a polynomial of degree 2'
+    ],
+    correctIndex: 1,
+    explanation: 'Newton\'s method fails when f\'(x_n) = 0 (division by zero). It can also cycle, diverge to infinity, or enter chaos. Example: f(x) = x³ - 2x + 2 from x₀ = 0 gives x₁ = 1, x₂ = 0, cycle.'
+  },
+  {
+    id: 'nm-3',
+    nodeId: 'newtons-method',
+    type: 'calculation',
+    question: 'Newton\'s method for f(x) = x² - 3 gives iteration g(x) = (x + 3/x)/2. Compute g\'(x*) at x* = √3 ≈ 1.7321. Give to 1 decimal place.',
+    correctAnswer: 0.0,
+    tolerance: 0.05,
+    explanation: 'g(x) = x/2 + 3/(2x). g\'(x) = 1/2 - 3/(2x²). At x*=√3: g\'(√3) = 1/2 - 3/6 = 1/2 - 1/2 = 0. This zero derivative gives quadratic convergence.'
+  },
+  {
+    id: 'nm-4',
+    nodeId: 'newtons-method',
+    type: 'short-answer',
+    question: 'What is the order of convergence of Newton\'s method for simple roots (where f\'(x*) ≠ 0)?',
+    acceptableAnswers: ['2', 'quadratic', 'Quadratic', 'second order', 'Second order', 'second', 'Second'],
+    explanation: 'Newton\'s method has quadratic (second-order) convergence for simple roots: |e_{n+1}| ≈ C|e_n|². The number of correct decimal digits roughly doubles each iteration.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // nm-derivation (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'nmd-1',
+    nodeId: 'nm-derivation',
+    type: 'multiple-choice',
+    question: 'Newton\'s method is derived by linearising f(x) using a Taylor series. Starting from x_n, you set f(x_{n+1}) ≈ 0 using the first-order approximation. This gives:',
+    options: [
+      'x_{n+1} = x_n + f(x_n)/f\'(x_n)',
+      'x_{n+1} = x_n - f(x_n)/f\'(x_n)',
+      'x_{n+1} = x_n - f\'(x_n)/f(x_n)',
+      'x_{n+1} = -f(x_n)/f\'(x_n)'
+    ],
+    correctIndex: 1,
+    explanation: 'f(x_{n+1}) ≈ f(x_n) + (x_{n+1} - x_n)f\'(x_n) = 0. Solving: x_{n+1} - x_n = -f(x_n)/f\'(x_n), so x_{n+1} = x_n - f(x_n)/f\'(x_n).'
+  },
+  {
+    id: 'nmd-2',
+    nodeId: 'nm-derivation',
+    type: 'short-answer',
+    question: 'Newton\'s method can be viewed as a fixed point iteration x_{n+1} = g(x_n). What is g(x) in terms of f?',
+    acceptableAnswers: ['g(x) = x - f(x)/f\'(x)', 'x - f(x)/f\'(x)'],
+    explanation: 'Newton\'s method is the fixed point iteration for g(x) = x - f(x)/f\'(x). Fixed points of g are solutions to g(x*) = x*, which gives -f(x*)/f\'(x*) = 0, i.e., f(x*) = 0 — exactly the roots we seek.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // nm-convergence (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'nmc-1',
+    nodeId: 'nm-convergence',
+    type: 'multiple-choice',
+    question: 'For a double root (f(x*) = 0 and f\'(x*) = 0), Newton\'s method converges:',
+    options: [
+      'Quadratically (second order)',
+      'Linearly (first order)',
+      'It does not converge at all',
+      'Cubically (third order)'
+    ],
+    correctIndex: 1,
+    explanation: 'For double roots, g\'(x*) = f(x*)f\'\'(x*)/(f\'(x*))² approaches 1/2 (by L\'Hôpital). Since g\'(x*) = 1/2 ≠ 0 but |1/2| < 1, convergence is linear (first-order): |e_{n+1}| ≈ (1/2)|e_n|.'
+  },
+  {
+    id: 'nmc-2',
+    nodeId: 'nm-convergence',
+    type: 'short-answer',
+    question: 'If Newton\'s method has 4 correct decimal digits after iteration n, approximately how many correct digits after iteration n+1 (for a simple root)?',
+    acceptableAnswers: ['8', 'eight'],
+    explanation: 'Quadratic convergence means the number of correct decimal digits roughly doubles each iteration. Starting with 4 correct digits, the next iterate has approximately 8 correct digits. This is why Newton\'s method is so powerful in practice.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // nm-failures (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'nmf-1',
+    nodeId: 'nm-failures',
+    type: 'multiple-choice',
+    question: 'For f(x) = x^(1/3), starting at x₀ ≠ 0, Newton\'s method will:',
+    options: [
+      'Converge quickly to x* = 0',
+      'Diverge — each iterate is twice as far from 0',
+      'Converge linearly',
+      'Converge quadratically'
+    ],
+    correctIndex: 1,
+    explanation: 'f\'(x) = (1/3)x^(-2/3), so x_{n+1} = x_n - x_n^(1/3) / ((1/3)x_n^(-2/3)) = x_n - 3x_n = -2x_n. The iterate doubles in magnitude and alternates sign — Newton\'s method diverges! This is because x*=0 is a triple root with f\'(0) = 0 (or undefined).'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // ode-basics (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'ode-1',
+    nodeId: 'ode-basics',
+    type: 'multiple-choice',
+    question: 'An initial value problem (IVP) for a first-order ODE is:',
+    options: [
+      'A differential equation with no constraints',
+      'A differential equation dy/dx = f(x,y) together with a starting condition y(x₀) = y₀',
+      'A system of algebraic equations',
+      'A boundary value problem with conditions at two endpoints'
+    ],
+    correctIndex: 1,
+    explanation: 'An IVP consists of a differential equation dy/dx = f(x,y) and an initial condition y(x₀) = y₀. The goal is to find y(x) for x > x₀. Unlike boundary value problems, all conditions are specified at a single point x₀.'
+  },
+  {
+    id: 'ode-2',
+    nodeId: 'ode-basics',
+    type: 'short-answer',
+    question: 'For the ODE dy/dx = f(x,y) solved numerically by stepping forward from x₀ to x₀+h, the key quantity at each step is the slope f(x_n, y_n). What is the Euler update formula for y_{n+1}?',
+    acceptableAnswers: ['y_{n+1} = y_n + h*f(x_n, y_n)', 'y_n + h*f(x_n, y_n)', 'y_n + hf(x_n,y_n)'],
+    explanation: 'Euler\'s method: y_{n+1} = y_n + h·f(x_n, y_n). We approximate the slope of y over the interval [x_n, x_{n+1}] by the slope at the left endpoint. The larger h, the bigger the error.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // euler-method (3 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'em-1',
+    nodeId: 'euler-method',
+    type: 'calculation',
+    question: 'Use Euler\'s method with step size h = 0.1 to approximate y(0.1) for the IVP: dy/dx = 2x + y, y(0) = 1. Give your answer to 2 decimal places.',
+    correctAnswer: 1.1,
+    tolerance: 0.01,
+    explanation: 'y₁ = y₀ + h·f(x₀, y₀) = 1 + 0.1·(2·0 + 1) = 1 + 0.1 = 1.10.'
+  },
+  {
+    id: 'em-2',
+    nodeId: 'euler-method',
+    type: 'multiple-choice',
+    question: 'The local truncation error of Euler\'s method is:',
+    options: ['O(h)', 'O(h²)', 'O(h³)', 'O(h⁴)'],
+    correctIndex: 1,
+    explanation: 'The local truncation error (error per step) of Euler\'s method is O(h²). The global error (accumulated over 1/h steps to reach a fixed endpoint) is O(h), one order lower.'
+  },
+  {
+    id: 'em-3',
+    nodeId: 'euler-method',
+    type: 'multiple-choice',
+    question: 'Compared to the exact solution, Euler\'s method applied to dy/dx = -y with a large step size (h > 2) will typically:',
+    options: [
+      'Always underestimate the solution',
+      'Always overestimate the solution',
+      'Remain stable but inaccurate',
+      'Oscillate and diverge'
+    ],
+    correctIndex: 3,
+    explanation: 'For dy/dx = -y (λ = -1), Euler gives y_{n+1} = y_n(1 + hλ) = y_n(1 - h). Stability requires |1 - h| < 1, i.e., h < 2. For h > 2: |1 - h| > 1, so the iterates oscillate and grow without bound.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // euler-error (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'ee-1',
+    nodeId: 'euler-error',
+    type: 'multiple-choice',
+    question: 'If you halve the step size h in Euler\'s method, the global error:',
+    options: [
+      'Remains the same',
+      'Halves (multiplied by 1/2)',
+      'Quarters (multiplied by 1/4)',
+      'Doubles'
+    ],
+    correctIndex: 1,
+    explanation: 'Euler\'s method has global error O(h). Halving h halves the global error. Compare to RK4 where halving h reduces the error by a factor of 16 (since global error is O(h⁴)).'
+  },
+  {
+    id: 'ee-2',
+    nodeId: 'euler-error',
+    type: 'short-answer',
+    question: 'The global error of Euler\'s method is O(h). If h is reduced by a factor of 10, by what factor does the global error reduce?',
+    acceptableAnswers: ['10', 'ten', '10x', 'factor of 10'],
+    explanation: 'Since global error is O(h), reducing h by a factor of 10 reduces global error by a factor of 10. This is first-order convergence. For RK4 with O(h⁴), reducing h by 10 reduces error by 10⁴ = 10,000.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // rk4 (4 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'rk4-1',
+    nodeId: 'rk4',
+    type: 'multiple-choice',
+    question: 'In the RK4 method, the four slopes k₁, k₂, k₃, k₄ are combined as:',
+    options: [
+      'y_{n+1} = y_n + h·(k₁ + k₂ + k₃ + k₄)/4',
+      'y_{n+1} = y_n + h·(k₁ + 2k₂ + 2k₃ + k₄)/6',
+      'y_{n+1} = y_n + h·(k₁ + 3k₂ + 3k₃ + k₄)/8',
+      'y_{n+1} = y_n + h·k₄'
+    ],
+    correctIndex: 1,
+    explanation: 'RK4 formula: y_{n+1} = y_n + (h/6)(k₁ + 2k₂ + 2k₃ + k₄). The weights (1,2,2,1) sum to 6, reflecting Simpson\'s rule. Midpoint slopes k₂ and k₃ get double weight.'
+  },
+  {
+    id: 'rk4-2',
+    nodeId: 'rk4',
+    type: 'calculation',
+    question: 'Use RK4 with h = 0.1 to estimate y(0.1) for dy/dx = y, y(0) = 1. Give y₁ to 6 decimal places.',
+    correctAnswer: 1.105171,
+    tolerance: 0.0001,
+    explanation: 'f(x,y) = y:\nk₁ = 1, k₂ = 1.05, k₃ = 1.0525, k₄ = 1.10525\ny₁ = 1 + (0.1/6)(1 + 2.1 + 2.105 + 1.10525) ≈ 1.105171.\nExact: e^0.1 ≈ 1.105171. RK4 is essentially exact here.'
+  },
+  {
+    id: 'rk4-3',
+    nodeId: 'rk4',
+    type: 'multiple-choice',
+    question: 'The global error of the RK4 method is:',
+    options: ['O(h)', 'O(h²)', 'O(h³)', 'O(h⁴)'],
+    correctIndex: 3,
+    explanation: 'RK4 has local truncation error O(h⁵). After 1/h steps, global error is O(h⁴). Halving h reduces RK4 error by a factor of 16, versus only 2 for Euler.'
+  },
+  {
+    id: 'rk4-4',
+    nodeId: 'rk4',
+    type: 'short-answer',
+    question: 'How many function evaluations does one step of the classical RK4 method require?',
+    acceptableAnswers: ['4', 'four', 'Four'],
+    explanation: 'RK4 requires 4 evaluations of f(x,y) per step — one for each of k₁, k₂, k₃, k₄. Euler requires only 1. However, RK4\'s much higher accuracy means larger step sizes suffice.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // rk4-slopes (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'rks-1',
+    nodeId: 'rk4-slopes',
+    type: 'multiple-choice',
+    question: 'In RK4, k₂ is computed as f(x_n + h/2, y_n + h·k₁/2). Why do we evaluate at the midpoint?',
+    options: [
+      'It reduces the number of function evaluations',
+      'It provides a better estimate of the average slope over the interval',
+      'It ensures the method is exactly Simpson\'s rule',
+      'Both B and C are correct'
+    ],
+    correctIndex: 3,
+    explanation: 'Both B and C: using midpoint estimates gives better accuracy because the slope at the midpoint is a better approximation of the average slope over the step. The (1,2,2,1)/6 weighting is exactly Simpson\'s rule applied to the slopes, which is 4th-order accurate.'
+  },
+  {
+    id: 'rks-2',
+    nodeId: 'rk4-slopes',
+    type: 'calculation',
+    question: 'For dy/dx = x + y, y(0) = 1, h = 0.5: compute k₁ (the slope at (x₀, y₀) = (0, 1)). Give your answer.',
+    correctAnswer: 1.0,
+    tolerance: 0.001,
+    explanation: 'k₁ = f(x₀, y₀) = f(0, 1) = 0 + 1 = 1.0. This is simply the right-hand side of the ODE evaluated at the initial point.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // systems-of-odes (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'sode-1',
+    nodeId: 'systems-of-odes',
+    type: 'multiple-choice',
+    question: 'To apply RK4 to the system dx/dt = f(x,y), dy/dt = g(x,y), at each step you compute:',
+    options: [
+      'k₁ for x only, then update y separately',
+      'k₁ for both x and y simultaneously, using the same current state',
+      'Solve x first, then use the updated x to solve y',
+      'Run RK4 independently for x and y using the same k values'
+    ],
+    correctIndex: 1,
+    explanation: 'For coupled systems, all k values must be computed simultaneously using the current state. k₁ for both x and y uses (x_n, y_n); k₂ for both uses the midpoint estimate from k₁, etc. The coupling means you cannot solve x and y independently.'
+  },
+  {
+    id: 'sode-2',
+    nodeId: 'systems-of-odes',
+    type: 'short-answer',
+    question: 'In the Lotka-Volterra predator-prey system, what does a phase portrait show?',
+    acceptableAnswers: ['trajectories', 'closed curves', 'closed orbits', 'periodic orbits', 'limit cycles', 'cycles'],
+    explanation: 'The phase portrait of the Lotka-Volterra system shows closed curves (orbits) in the prey-predator plane. These represent periodic oscillations: as prey increase, predators increase; as predators increase, prey decrease; etc. The system is conservative — orbits are closed, not spirals.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // probability-primer (3 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'pp-1',
+    nodeId: 'probability-primer',
+    type: 'calculation',
+    question: 'A diagnostic test has sensitivity 0.95 and specificity 0.90. If 2% of the population has the disease, what is P(disease | positive test)? Give to 3 decimal places.',
+    correctAnswer: 0.162,
+    tolerance: 0.002,
+    explanation: 'P(T+) = 0.95·0.02 + 0.10·0.98 = 0.019 + 0.098 = 0.117.\nP(D|T+) = 0.019/0.117 ≈ 0.162.\nDespite accuracy, low base rate (2%) means most positives are false positives.'
+  },
+  {
+    id: 'pp-2',
+    nodeId: 'probability-primer',
+    type: 'multiple-choice',
+    question: 'If X ~ Binomial(n=10, p=0.3), what is E[X]?',
+    options: ['0.3', '3', '7', '10'],
+    correctIndex: 1,
+    explanation: 'For Binomial(n, p): E[X] = np = 10 × 0.3 = 3. Variance = np(1-p) = 2.1.'
+  },
+  {
+    id: 'pp-3',
+    nodeId: 'probability-primer',
+    type: 'multiple-choice',
+    question: 'Two events A and B are independent if and only if:',
+    options: [
+      'P(A ∩ B) = 0',
+      'P(A ∩ B) = P(A) · P(B)',
+      'P(A ∪ B) = P(A) + P(B)',
+      'P(A|B) = P(B|A)'
+    ],
+    correctIndex: 1,
+    explanation: 'Independence: P(A ∩ B) = P(A)·P(B). Option A is mutual exclusivity. Option C is the addition rule for mutually exclusive events.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // genetics-intro (3 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'gi-1',
+    nodeId: 'genetics-intro',
+    type: 'multiple-choice',
+    question: 'The central dogma of molecular biology describes the flow of genetic information as:',
+    options: [
+      'Protein → RNA → DNA',
+      'RNA → DNA → Protein',
+      'DNA → RNA → Protein',
+      'DNA → Protein → RNA'
+    ],
+    correctIndex: 2,
+    explanation: 'DNA is transcribed into RNA, which is translated into protein: DNA → mRNA → Protein.'
+  },
+  {
+    id: 'gi-2',
+    nodeId: 'genetics-intro',
+    type: 'short-answer',
+    question: 'What type of mutation involves a single nucleotide being replaced by a different nucleotide (e.g., A replaced by G)?',
+    acceptableAnswers: ['substitution', 'Substitution', 'point mutation', 'Point mutation', 'SNP'],
+    explanation: 'A substitution (point mutation) replaces one nucleotide with another. Transitions: purine↔purine or pyrimidine↔pyrimidine. Transversions: purine↔pyrimidine.'
+  },
+  {
+    id: 'gi-3',
+    nodeId: 'genetics-intro',
+    type: 'multiple-choice',
+    question: 'DNA base pairs follow complementary rules. Which pairing is correct?',
+    options: [
+      'A pairs with G, C pairs with T',
+      'A pairs with C, G pairs with T',
+      'A pairs with T, C pairs with G',
+      'A pairs with A, T pairs with T'
+    ],
+    correctIndex: 2,
+    explanation: 'Watson-Crick base pairing: A-T (2 hydrogen bonds), C-G (3 hydrogen bonds). GC-rich regions have higher melting temperatures.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // pairwise-alignment (3 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'pa-1',
+    nodeId: 'pairwise-alignment',
+    type: 'calculation',
+    question: 'Given match=+2, mismatch=-1, gap=-2, score the alignment:\nA T C G\nA - C T\n(where - is a gap)',
+    correctAnswer: 1,
+    tolerance: 0.01,
+    explanation: 'A vs A: +2; T vs -: -2; C vs C: +2; G vs T: -1. Total = 2-2+2-1 = 1.'
+  },
+  {
+    id: 'pa-2',
+    nodeId: 'pairwise-alignment',
+    type: 'multiple-choice',
+    question: 'Why is brute-force comparison of all possible alignments infeasible?',
+    options: [
+      'The number of possible alignments grows polynomially',
+      'The number of possible alignments grows exponentially with sequence length',
+      'Computers cannot compare characters',
+      'The scoring schemes are ambiguous'
+    ],
+    correctIndex: 1,
+    explanation: 'For sequences of length n and m, the number of alignments grows combinatorially — roughly C(n+m, n), which is exponential. For length 100, ~10^58 alignments. DP reduces this to O(nm).'
+  },
+  {
+    id: 'pa-3',
+    nodeId: 'pairwise-alignment',
+    type: 'multiple-choice',
+    question: 'Which substitution matrix is most appropriate for comparing distantly related protein sequences?',
+    options: ['PAM 1', 'PAM 250', 'BLOSUM 90', 'Identity matrix'],
+    correctIndex: 1,
+    explanation: 'PAM 250 is for distantly related sequences (250 PAMs of evolutionary distance). BLOSUM 90 and PAM 1 are for closely related sequences.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // dp-principle (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
     id: 'dp-1',
-    nodeId: 'discrete-probability',
+    nodeId: 'dp-principle',
     type: 'multiple-choice',
-    question: 'Two fair six-sided dice are rolled. What is the probability that their sum equals 7?',
+    question: 'Dynamic programming is applicable when a problem has:',
     options: [
-      '1/6',
-      '1/12',
-      '7/36',
-      '1/9'
+      'No repeated subproblems',
+      'Optimal substructure and overlapping subproblems',
+      'Only a polynomial number of possible solutions',
+      'A greedy optimal solution'
     ],
-    correctIndex: 0,
-    explanation: 'There are 36 equally likely outcomes. Pairs that sum to 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) — that is 6 outcomes. So the probability is 6/36 = 1/6.'
+    correctIndex: 1,
+    explanation: 'DP requires: (1) optimal substructure — the optimal solution to the problem contains optimal solutions to subproblems; (2) overlapping subproblems — the same subproblems are solved multiple times in a naive recursive approach. DP solves each subproblem once and stores the result.'
   },
   {
     id: 'dp-2',
-    nodeId: 'discrete-probability',
-    type: 'multiple-choice',
-    question: 'A bag contains 3 red and 5 blue balls. Two balls are drawn without replacement. What is the probability both are red?',
-    options: [
-      '9/64',
-      '3/28',
-      '3/8',
-      '6/56'
-    ],
-    correctIndex: 1,
-    explanation: 'P(first red) = 3/8. Given first is red, P(second red) = 2/7. Combined: (3/8)(2/7) = 6/56 = 3/28.'
-  },
-  {
-    id: 'dp-3',
-    nodeId: 'discrete-probability',
-    type: 'multiple-choice',
-    question: 'Which statement correctly describes mutually exclusive events A and B (both with positive probability)?',
-    options: [
-      'P(A ∩ B) = P(A)·P(B)',
-      'P(A ∪ B) = P(A) + P(B)',
-      'P(A | B) = P(A)',
-      'A and B must also be independent'
-    ],
-    correctIndex: 1,
-    explanation: 'Mutually exclusive means A and B cannot both occur, so P(A ∩ B) = 0. The addition rule therefore simplifies to P(A ∪ B) = P(A) + P(B). They cannot be independent because P(A|B) = 0 ≠ P(A).'
+    nodeId: 'dp-principle',
+    type: 'short-answer',
+    question: 'Dynamic programming reduces the time complexity of sequence alignment from exponential to what complexity (for sequences of length n and m)?',
+    acceptableAnswers: ['O(nm)', 'O(n*m)', 'O(n·m)', 'polynomial', 'quadratic'],
+    explanation: 'DP reduces alignment from exponential (brute force) to O(nm) time and O(nm) space, by filling in a matrix of (n+1)×(m+1) cells, each computed in O(1) from three predecessors.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // random-variables (3 questions)
+  // needleman-wunsch (4 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'rv-1',
-    nodeId: 'random-variables',
+    id: 'nw-1',
+    nodeId: 'needleman-wunsch',
     type: 'multiple-choice',
-    question: 'A discrete random variable X has P(X=1)=0.2, P(X=2)=0.5, P(X=3)=0.3. What is E[X]?',
+    question: 'In Needleman-Wunsch, the recurrence F(i,j) considers the maximum of three values corresponding to:',
     options: [
-      '1.9',
-      '2.0',
-      '2.1',
-      '2.2'
-    ],
-    correctIndex: 2,
-    explanation: 'E[X] = 1(0.2) + 2(0.5) + 3(0.3) = 0.2 + 1.0 + 0.9 = 2.1.'
-  },
-  {
-    id: 'rv-2',
-    nodeId: 'random-variables',
-    type: 'multiple-choice',
-    question: 'If Var(X) = 4, what is the standard deviation of X?',
-    options: [
-      '16',
-      '2',
-      '8',
-      '4'
+      'Match, insertion, deletion',
+      'F(i-1,j-1)+s(aᵢ,bⱼ), F(i-1,j)+d, F(i,j-1)+d',
+      'Only diagonal moves',
+      'Random selection from three neighbors'
     ],
     correctIndex: 1,
-    explanation: 'Standard deviation is the square root of variance. √4 = 2.'
+    explanation: 'F(i,j) = max{ F(i-1,j-1)+s(aᵢ,bⱼ) [diagonal: align], F(i-1,j)+d [vertical: gap in B], F(i,j-1)+d [horizontal: gap in A] }.'
   },
   {
-    id: 'rv-3',
-    nodeId: 'random-variables',
+    id: 'nw-2',
+    nodeId: 'needleman-wunsch',
+    type: 'calculation',
+    question: 'Using NW with match=+1, mismatch=-1, gap=-2, align "AT" and "A". What is the optimal global alignment score?',
+    correctAnswer: -1,
+    tolerance: 0.01,
+    explanation: 'Matrix: F(0,0)=0, F(1,0)=-2, F(2,0)=-4, F(0,1)=-2.\nF(1,1)=max(0+1,-2-2,-2-2)=1\nF(2,1)=max(-2-1,1-2,-4-2)=-1.\nOptimal score=-1 (align A with A: +1, T with gap: -2).'
+  },
+  {
+    id: 'nw-3',
+    nodeId: 'needleman-wunsch',
     type: 'multiple-choice',
-    question: 'For independent random variables X and Y, which identity is always true?',
-    options: [
-      'Var(X + Y) = Var(X) · Var(Y)',
-      'E[XY] = E[X] + E[Y]',
-      'Var(X + Y) = Var(X) + Var(Y)',
-      'E[X + Y] = E[X] · E[Y]'
-    ],
-    correctIndex: 2,
-    explanation: 'For independent X and Y, variances add: Var(X+Y) = Var(X) + Var(Y). Expectations always add (E[X+Y] = E[X]+E[Y]) regardless of independence, but variance addition requires independence.'
+    question: 'The time complexity of Needleman-Wunsch for sequences of length n and m is:',
+    options: ['O(n+m)', 'O(n·m)', 'O(n²·m²)', 'O(2^(n+m))'],
+    correctIndex: 1,
+    explanation: 'NW fills an (n+1)×(m+1) matrix, each cell in O(1). Total: O(nm) time and space.'
+  },
+  {
+    id: 'nw-4',
+    nodeId: 'needleman-wunsch',
+    type: 'short-answer',
+    question: 'In Needleman-Wunsch, the traceback to find the optimal global alignment starts at which cell?',
+    acceptableAnswers: ['bottom-right', 'bottom right', 'F(n,m)', 'F(m,n)', 'last cell', 'lower right'],
+    explanation: 'NW traceback starts at F(n,m) — the bottom-right corner — because global alignment requires aligning both full sequences. Smith-Waterman (local) starts at the maximum cell anywhere.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // named-distributions (3 questions)
+  // nw-recurrence (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'nd-1',
-    nodeId: 'named-distributions',
+    id: 'nwr-1',
+    nodeId: 'nw-recurrence',
     type: 'multiple-choice',
-    question: 'X ~ Binomial(n=10, p=0.4). What is E[X]?',
-    options: [
-      '0.4',
-      '4',
-      '6',
-      '2.4'
-    ],
-    correctIndex: 1,
-    explanation: 'For a Binomial distribution, E[X] = np = 10 × 0.4 = 4.'
-  },
-  {
-    id: 'nd-2',
-    nodeId: 'named-distributions',
-    type: 'multiple-choice',
-    question: 'A Poisson random variable with λ=3 models the number of events in a fixed interval. What is the variance?',
-    options: [
-      '9',
-      '√3',
-      '3',
-      '1/3'
-    ],
+    question: 'In NW with gap penalty d = -2, what is F(0, 3) (the initialisation value in the first row, column 3)?',
+    options: ['-2', '-4', '-6', '0'],
     correctIndex: 2,
-    explanation: 'For a Poisson distribution, both the mean and variance equal λ. So Var(X) = 3.'
+    explanation: 'Initialisation: F(0,j) = j·d = 3·(-2) = -6. Similarly F(i,0) = i·d. This represents aligning i or j characters of one sequence with gaps.'
   },
   {
-    id: 'nd-3',
-    nodeId: 'named-distributions',
+    id: 'nwr-2',
+    nodeId: 'nw-recurrence',
     type: 'multiple-choice',
-    question: 'The Geometric distribution with parameter p models:',
+    question: 'Which move in the NW DP corresponds to a gap in sequence B (inserting a gap in the second sequence)?',
     options: [
-      'The number of successes in n trials',
-      'The number of trials until the first success',
-      'The time between events in a Poisson process',
-      'The number of events in a fixed time window'
+      'Diagonal move: F(i-1, j-1)',
+      'Vertical move: F(i-1, j)',
+      'Horizontal move: F(i, j-1)',
+      'Any of the above depending on the score'
     ],
     correctIndex: 1,
-    explanation: 'The Geometric distribution counts the number of independent Bernoulli trials needed to get the first success. Its mean is 1/p.'
+    explanation: 'A vertical move (from F(i-1,j) to F(i,j)) aligns character aᵢ with a gap in B. A horizontal move (F(i,j-1) to F(i,j)) aligns a gap in A with character bⱼ. Diagonal aligns aᵢ with bⱼ directly.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // continuous-distributions (3 questions)
+  // nw-traceback (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'cd-1',
-    nodeId: 'continuous-distributions',
+    id: 'nwt-1',
+    nodeId: 'nw-traceback',
     type: 'multiple-choice',
-    question: 'For a continuous random variable, P(X = c) for any specific constant c equals:',
+    question: 'During NW traceback, if you are at F(i,j) and the predecessor was F(i-1,j-1), what does this mean for the alignment?',
     options: [
-      'The value of the PDF at c',
-      'The value of the CDF at c',
-      '0',
-      'It depends on the distribution'
+      'Gap in sequence A at position i',
+      'Gap in sequence B at position j',
+      'Align character aᵢ with character bⱼ (match or mismatch)',
+      'Skip both characters'
     ],
     correctIndex: 2,
-    explanation: 'For any continuous random variable, the probability of any single point is 0, because integrating the PDF over a zero-width interval gives 0.'
+    explanation: 'A diagonal move from F(i-1,j-1) to F(i,j) means characters aᵢ and bⱼ are aligned (either a match or a mismatch). The score F(i-1,j-1) + s(aᵢ,bⱼ) was used.'
   },
   {
-    id: 'cd-2',
-    nodeId: 'continuous-distributions',
-    type: 'multiple-choice',
-    question: 'X ~ Uniform(0, 10). What is P(3 < X < 7)?',
-    options: [
-      '0.3',
-      '0.7',
-      '0.4',
-      '4'
-    ],
-    correctIndex: 2,
-    explanation: 'For Uniform(a,b), P(c < X < d) = (d−c)/(b−a) = (7−3)/(10−0) = 4/10 = 0.4.'
-  },
-  {
-    id: 'cd-3',
-    nodeId: 'continuous-distributions',
-    type: 'multiple-choice',
-    question: 'If X ~ Normal(μ=50, σ=5), approximately what percentage of values fall within one standard deviation of the mean?',
-    options: [
-      '50%',
-      '68%',
-      '95%',
-      '99.7%'
-    ],
-    correctIndex: 1,
-    explanation: 'The empirical (68-95-99.7) rule states that ~68% of values fall within ±1σ, ~95% within ±2σ, and ~99.7% within ±3σ for a normal distribution.'
+    id: 'nwt-2',
+    nodeId: 'nw-traceback',
+    type: 'short-answer',
+    question: 'True or false: there can be multiple optimal alignments for a pair of sequences with the same score.',
+    acceptableAnswers: ['true', 'True', 'yes', 'Yes'],
+    explanation: 'True. Multiple cells may be tied as the maximum, so multiple traceback paths are possible, yielding different but equally optimal alignments. All have the same score.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // central-limit-theorem (3 questions)
+  // smith-waterman (1 question)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'clt-1',
-    nodeId: 'central-limit-theorem',
+    id: 'sw-1',
+    nodeId: 'smith-waterman',
     type: 'multiple-choice',
-    question: 'The Central Limit Theorem states that the sampling distribution of the sample mean approaches normal as:',
+    question: 'In Smith-Waterman, the modification to the Needleman-Wunsch recurrence is:',
     options: [
-      'The population becomes normally distributed',
-      'The variance of the population decreases',
-      'The sample size increases',
-      'The number of samples increases'
-    ],
-    correctIndex: 2,
-    explanation: 'The CLT applies regardless of the population distribution. As the sample size n increases (typically n ≥ 30 is sufficient), the distribution of the sample mean X̄ approaches N(μ, σ²/n).'
-  },
-  {
-    id: 'clt-2',
-    nodeId: 'central-limit-theorem',
-    type: 'multiple-choice',
-    question: 'A population has mean μ=100 and σ=20. For samples of size n=100, the standard error of the mean is:',
-    options: [
-      '20',
-      '2',
-      '0.2',
-      '200'
+      'Start traceback from top-left instead of bottom-right',
+      'Add a fourth option: max(…, 0) — floor the cell at 0',
+      'Use a different gap penalty',
+      'Run the traceback from the maximum cell to the left-top corner'
     ],
     correctIndex: 1,
-    explanation: 'Standard error = σ/√n = 20/√100 = 20/10 = 2.'
-  },
-  {
-    id: 'clt-3',
-    nodeId: 'central-limit-theorem',
-    type: 'multiple-choice',
-    question: 'The CLT is particularly useful because it:',
-    options: [
-      'Tells us the exact distribution of any population',
-      'Allows normal-based inference even when the population is not normal',
-      'Guarantees that large samples are unbiased',
-      'Eliminates sampling error for large samples'
-    ],
-    correctIndex: 1,
-    explanation: 'The practical power of the CLT is that we can use z-tests and confidence intervals based on the normal distribution even when we do not know the population distribution, provided n is large enough.'
+    explanation: 'SW adds 0 to the max: F(i,j) = max{ F(i-1,j-1)+s, F(i-1,j)+d, F(i,j-1)+d, 0 }. This allows alignment to "restart" at any point. Traceback starts at the maximum cell and stops when reaching 0.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // statistical-inference (3 questions)
+  // affine-gaps (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'si-1',
-    nodeId: 'statistical-inference',
+    id: 'ag-1',
+    nodeId: 'affine-gaps',
     type: 'multiple-choice',
-    question: 'A 95% confidence interval for a mean is (42, 58). Which interpretation is correct?',
+    question: 'With affine gap penalty, a gap of length k costs:',
     options: [
-      'There is a 95% probability that the true mean lies in (42, 58)',
-      'If we repeated the procedure many times, 95% of intervals would contain the true mean',
-      '95% of data values lie between 42 and 58',
-      'The sample mean is between 42 and 58 with probability 0.95'
+      'k·d (linear)',
+      'd + (k-1)·e (open + extend)',
+      'k·e (extension only)',
+      'd·k·e'
     ],
     correctIndex: 1,
-    explanation: 'A confidence interval is a procedure: 95% of intervals constructed this way will contain the true parameter. Any specific interval either contains the true mean or it does not — the 95% refers to the long-run frequency of the procedure.'
+    explanation: 'Affine gap penalty: gap of length k costs d + (k-1)·e, where d is the gap opening penalty and e is the extension penalty. This captures the biological observation that a gap of 5 is more similar to a gap of 4 than to 5 separate single-base gaps.'
   },
   {
-    id: 'si-2',
-    nodeId: 'statistical-inference',
+    id: 'ag-2',
+    nodeId: 'affine-gaps',
+    type: 'short-answer',
+    question: 'In the three-matrix affine gap DP, what do the three matrices M, Ix, Iy track?',
+    acceptableAnswers: ['match/mismatch, gap in x, gap in y', 'aligned chars, gap in first seq, gap in second seq', 'M Ix Iy track different gap states'],
+    explanation: 'M(i,j): both characters aligned (diagonal); Ix(i,j): gap in sequence X (vertical move, gap in X); Iy(i,j): gap in sequence Y (horizontal move, gap in Y). Tracking the gap state lets us apply the gap-open penalty only when starting a new gap.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // affine-recurrences (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'agr-1',
+    nodeId: 'affine-recurrences',
     type: 'multiple-choice',
-    question: 'A hypothesis test yields p = 0.03. At significance level α = 0.05, you should:',
+    question: 'In affine gap alignment, Ix(i,j) (gap in sequence X) is computed as:',
     options: [
-      'Fail to reject H₀ because 0.03 < 0.05',
-      'Reject H₀ because 0.03 < 0.05',
-      'Accept H₀ because the p-value is small',
-      'Reject H₁ because the p-value is small'
+      'Ix(i,j) = max(M(i-1,j) - d, Ix(i-1,j) - e)',
+      'Ix(i,j) = max(M(i,j-1) - d, Ix(i,j-1) - e)',
+      'Ix(i,j) = M(i-1,j) - d only',
+      'Ix(i,j) = max(M(i-1,j-1) + s, Ix(i-1,j-1) - e)'
+    ],
+    correctIndex: 0,
+    explanation: 'Ix(i,j) = max(M(i-1,j) - d, Ix(i-1,j) - e). Coming from M means opening a new gap (cost d); coming from Ix means extending an existing gap (cost e). Since e < d, extending is cheaper than opening.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // multiple-sequence-alignment (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'msa-1',
+    nodeId: 'multiple-sequence-alignment',
+    type: 'multiple-choice',
+    question: 'The exact DP algorithm for aligning k sequences of length n has time complexity:',
+    options: ['O(n²)', 'O(n^k)', 'O(n·k)', 'O(k!)'],
+    correctIndex: 1,
+    explanation: 'Exact MSA by DP fills an n^k -cell hypercube (one dimension per sequence). For k=2: O(n²) — this is NW. For k=3: O(n³). This exponential growth makes exact MSA infeasible for k ≥ 4-5, motivating heuristics like progressive alignment.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // progressive-alignment (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'prog-1',
+    nodeId: 'progressive-alignment',
+    type: 'multiple-choice',
+    question: 'In Feng-Doolittle progressive alignment, what is the "once-a-gap-always-a-gap" rule?',
+    options: [
+      'Once a gap is introduced in the guide tree, it is never removed from any alignment',
+      'Once a gap is introduced in a profile during progressive alignment, it is preserved in subsequent alignments',
+      'Gaps can only be added, never removed',
+      'The gap penalty is fixed throughout the alignment'
     ],
     correctIndex: 1,
-    explanation: 'We reject H₀ when p ≤ α. Here 0.03 ≤ 0.05, so we reject H₀. Note: we never "accept" H₀ — we either reject it or fail to reject it.'
+    explanation: 'Once-a-gap-always-a-gap: when you align profiles (groups of sequences already aligned), gaps introduced in previous steps are preserved as "neutral" characters rather than allowing the DP to remove them. This greedy approach makes the algorithm fast but can propagate errors.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // exponential-distribution (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'exp-1',
+    nodeId: 'exponential-distribution',
+    type: 'calculation',
+    question: 'If X ~ Exp(λ = 2), what is P(X > 1)? Give to 4 decimal places.',
+    correctAnswer: 0.1353,
+    tolerance: 0.001,
+    explanation: 'P(X > 1) = 1 - F(1) = 1 - (1 - e^{-2·1}) = e^{-2} ≈ 0.1353.'
   },
   {
-    id: 'si-3',
-    nodeId: 'statistical-inference',
+    id: 'exp-2',
+    nodeId: 'exponential-distribution',
     type: 'multiple-choice',
-    question: 'A Type II error occurs when:',
+    question: 'The memoryless property of the exponential distribution states:',
     options: [
-      'We reject a true null hypothesis',
-      'We fail to reject a false null hypothesis',
-      'The p-value exceeds 1',
-      'The sample size is too small to compute a test statistic'
+      'P(X > s + t | X > s) = P(X > t) for all s, t ≥ 0',
+      'P(X > s + t) = P(X > s) · P(X > t) only if s = t',
+      'The mean and variance are always equal',
+      'Knowing X > s means X > t for any t > s'
+    ],
+    correctIndex: 0,
+    explanation: 'P(X > s+t | X > s) = P(X > t). Having already waited time s, the remaining wait time has the same Exp(λ) distribution. This is the continuous analogue of the geometric distribution\'s memorylessness.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // inversion-sampling (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'inv-1',
+    nodeId: 'inversion-sampling',
+    type: 'short-answer',
+    question: 'If U ~ Uniform(0,1) and X = -ln(U)/λ, what distribution does X follow?',
+    acceptableAnswers: ['Exponential(λ)', 'Exp(λ)', 'exponential', 'Exponential'],
+    explanation: 'The inversion sampling result: if U ~ U(0,1), then X = F⁻¹(U) has CDF F. For Exp(λ): F(x) = 1-e^{-λx}, so F⁻¹(u) = -ln(1-u)/λ. Since 1-U ~ U(0,1), we can use X = -ln(U)/λ. This gives X ~ Exp(λ).'
+  },
+  {
+    id: 'inv-2',
+    nodeId: 'inversion-sampling',
+    type: 'multiple-choice',
+    question: 'To use inversion sampling for a distribution with CDF F(x), you need:',
+    options: [
+      'A closed-form PDF f(x)',
+      'The inverse CDF F⁻¹(u) to be computable',
+      'The distribution to be symmetric',
+      'Normal distribution tables'
     ],
     correctIndex: 1,
-    explanation: 'Type I error: rejecting a true H₀ (false positive). Type II error: failing to reject a false H₀ (false negative). The probability of a Type II error is denoted β, and power = 1 − β.'
+    explanation: 'Inversion sampling requires computing F⁻¹(u) for u ~ U(0,1). If F⁻¹ has a closed form (e.g., for Exponential, Uniform, Cauchy), this is easy. When F⁻¹ is not in closed form (e.g., Normal), other methods like Box-Muller or acceptance-rejection are used.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // bayesian-inference (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'bay-1',
+    nodeId: 'bayesian-inference',
+    type: 'multiple-choice',
+    question: 'Maximum likelihood estimation (MLE) finds:',
+    options: [
+      'The parameter value with the highest prior probability',
+      'The parameter value that maximises P(data | θ)',
+      'The parameter value that maximises P(θ | data)',
+      'The posterior mean'
+    ],
+    correctIndex: 1,
+    explanation: 'MLE finds θ̂ = argmax_θ L(θ) = argmax_θ P(data | θ). It maximises the likelihood of the observed data. The MAP estimate maximises the posterior P(θ|data), which equals P(data|θ)·P(θ). MLE ignores the prior.'
+  },
+  {
+    id: 'bay-2',
+    nodeId: 'bayesian-inference',
+    type: 'short-answer',
+    question: 'What is the log-likelihood for n i.i.d. Bernoulli(p) observations with k successes?',
+    acceptableAnswers: ['k*ln(p) + (n-k)*ln(1-p)', 'k ln(p) + (n-k) ln(1-p)'],
+    explanation: 'L(p) = p^k (1-p)^{n-k}. Log-likelihood: ℓ(p) = k ln(p) + (n-k) ln(1-p). Taking d/dp ℓ = 0: k/p - (n-k)/(1-p) = 0 → p̂ = k/n (the sample proportion, as expected).'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // simulation-basics (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'sim-1',
+    nodeId: 'simulation-basics',
+    type: 'multiple-choice',
+    question: 'Which method generates samples from a distribution with known PDF but no closed-form CDF inverse?',
+    options: [
+      'Inversion sampling',
+      'Acceptance-rejection sampling',
+      'Stratified sampling',
+      'Importance sampling'
+    ],
+    correctIndex: 1,
+    explanation: 'Acceptance-rejection: sample from a proposal distribution g(x) ≥ c·f(x), then accept with probability f(x)/(c·g(x)). Works when the CDF inverse is unavailable. Inversion sampling requires a computable F⁻¹.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // markov-property (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'mpr-1',
+    nodeId: 'markov-property',
+    type: 'multiple-choice',
+    question: 'The Markov property states that:',
+    options: [
+      'All future states are equally likely',
+      'The future state depends only on the current state, not the history',
+      'Transition probabilities change over time',
+      'The chain must eventually visit every state'
+    ],
+    correctIndex: 1,
+    explanation: 'Markov property (memorylessness): P(X_{n+1}=j | X_n=i, X_{n-1},...,X_0) = P(X_{n+1}=j | X_n=i). The entire history is summarised by the current state.'
+  },
+  {
+    id: 'mpr-2',
+    nodeId: 'markov-property',
+    type: 'short-answer',
+    question: 'Is a simple random walk (at each step, move +1 or -1 with equal probability) a Markov chain?',
+    acceptableAnswers: ['yes', 'Yes', 'YES'],
+    explanation: 'Yes. The next position depends only on the current position, not on how you got there. P(X_{n+1} = x+1 | X_n = x) = 1/2 regardless of X_0,...,X_{n-1}. The simple random walk is a canonical example of a Markov chain.'
   },
 
   // ══════════════════════════════════════════════════════════════
@@ -330,1058 +900,655 @@ export const questionBank: Question[] = [
     id: 'mc-1',
     nodeId: 'markov-chains',
     type: 'multiple-choice',
-    question: 'The Markov property states that:',
+    question: 'A Markov chain transition matrix P has entries P_{ij} that:',
     options: [
-      'The chain always converges to a uniform distribution',
-      'Future states depend on the entire history of the chain',
-      'The future state depends only on the current state, not the past',
-      'Transition probabilities must be symmetric'
+      'Can be any real number',
+      'Are non-negative and each row sums to 1',
+      'Are non-negative and each column sums to 1',
+      'Sum to 1 across the entire matrix'
     ],
-    correctIndex: 2,
-    explanation: 'The Markov (memoryless) property: given the present state, the future is independent of the past. P(Xₙ₊₁ = j | Xₙ = i, Xₙ₋₁, …) = P(Xₙ₊₁ = j | Xₙ = i).'
+    correctIndex: 1,
+    explanation: 'P_{ij} = P(X_{n+1}=j | X_n=i). Since probabilities are non-negative and the process must go somewhere, ∑_j P_{ij} = 1 (rows sum to 1). This is a "row stochastic" matrix.'
   },
   {
     id: 'mc-2',
     nodeId: 'markov-chains',
-    type: 'multiple-choice',
-    question: 'A stationary distribution π of a Markov chain satisfies:',
-    options: [
-      'π = πP (where P is the transition matrix)',
-      'πP = 0',
-      'π = P²',
-      'Pπ = I (the identity matrix)'
-    ],
-    correctIndex: 0,
-    explanation: 'The stationary (steady-state) distribution satisfies π = πP, meaning that if the chain starts in distribution π it remains in π after any number of steps. The entries of π must also sum to 1.'
+    type: 'calculation',
+    question: 'A Markov chain has P = [[0.7, 0.3], [0.4, 0.6]]. Starting in state 1 (index 0), what is P(state 2 | after 1 step)?',
+    correctAnswer: 0.3,
+    tolerance: 0.01,
+    explanation: 'P(next=state 2 | current=state 1) = P[0][1] = 0.3.'
   },
   {
     id: 'mc-3',
     nodeId: 'markov-chains',
-    type: 'multiple-choice',
-    question: 'An irreducible, aperiodic Markov chain on a finite state space:',
-    options: [
-      'Has no stationary distribution',
-      'Converges to a unique stationary distribution from any starting state',
-      'Must have all transition probabilities equal',
-      'Cannot return to its starting state'
-    ],
-    correctIndex: 1,
-    explanation: 'By the fundamental theorem of Markov chains, an irreducible (all states communicate) and aperiodic chain on a finite state space converges to a unique stationary distribution π, regardless of the initial state.'
+    type: 'calculation',
+    question: 'Find π₁ (stationary probability of state 1) for P = [[0.7, 0.3], [0.4, 0.6]]. Give to 3 decimal places.',
+    correctAnswer: 0.571,
+    tolerance: 0.002,
+    explanation: 'Solve πP = π, π₁+π₂ = 1.\n0.3π₁ = 0.4π₂ → π₂ = 0.75π₁\nπ₁ + 0.75π₁ = 1 → π₁ = 4/7 ≈ 0.571.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // linear-algebra-foundations (3 questions)
+  // stationary-distribution (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'la-1',
-    nodeId: 'linear-algebra-foundations',
+    id: 'stat-1',
+    nodeId: 'stationary-distribution',
     type: 'multiple-choice',
-    question: 'Which of the following sets of vectors is linearly independent?',
+    question: 'A stationary distribution π of a Markov chain satisfies:',
     options: [
-      '{(1,2), (2,4)}',
-      '{(1,0), (0,1)}',
-      '{(1,1), (2,2), (3,3)}',
-      '{(0,0), (1,0)}'
+      'Pπ = π (π is a left eigenvector)',
+      'πP = π (π is a left eigenvector with eigenvalue 1)',
+      'π = P^n for large n',
+      'π_i = 1/K for all states i'
     ],
     correctIndex: 1,
-    explanation: 'The standard basis vectors (1,0) and (0,1) are linearly independent — neither is a scalar multiple of the other. Options A and C have vectors that are multiples of each other; option D contains the zero vector (which makes any set linearly dependent).'
+    explanation: 'The stationary distribution satisfies πP = π (with ∑π_i = 1). Here π is a row vector, making it a left eigenvector of P with eigenvalue 1. For an ergodic chain, π is unique and represents the long-run frequencies.'
   },
   {
-    id: 'la-2',
-    nodeId: 'linear-algebra-foundations',
+    id: 'stat-2',
+    nodeId: 'stationary-distribution',
+    type: 'short-answer',
+    question: 'For a two-state Markov chain with P = [[1-a, a], [b, 1-b]], what is π₁ (the stationary probability of state 1)?',
+    acceptableAnswers: ['b/(a+b)', 'b / (a + b)'],
+    explanation: 'Solve π₁a = π₂b with π₁+π₂=1: π₁ = b/(a+b). Interpretation: the long-run fraction of time in state 1 is b/(a+b). If a (rate of leaving state 1) is small, π₁ is large.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // poisson-process (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'pp2-1',
+    nodeId: 'poisson-process',
     type: 'multiple-choice',
-    question: 'If A is a 3×4 matrix, what is the maximum possible rank of A?',
+    question: 'For a Poisson process with rate λ = 3 events/hour, the number of events in a 2-hour window follows:',
     options: [
-      '4',
-      '12',
-      '3',
-      '7'
+      'Exponential(6)',
+      'Poisson(6)',
+      'Poisson(3)',
+      'Normal(6, 6)'
+    ],
+    correctIndex: 1,
+    explanation: 'N(t) ~ Poisson(λt). For λ=3 and t=2: N(2) ~ Poisson(6). E[N(2)] = 6, Var[N(2)] = 6.'
+  },
+  {
+    id: 'pp2-2',
+    nodeId: 'poisson-process',
+    type: 'short-answer',
+    question: 'In a Poisson process with rate λ, what distribution do inter-arrival times follow?',
+    acceptableAnswers: ['Exponential(λ)', 'Exp(λ)', 'exponential with rate lambda', 'exponential'],
+    explanation: 'Inter-arrival times in a Poisson process are i.i.d. Exponential(λ). This is because of the memoryless property: the time until the next event is always Exp(λ), regardless of when the last event occurred.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // poisson-simulation (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'psim-1',
+    nodeId: 'poisson-simulation',
+    type: 'multiple-choice',
+    question: 'To simulate a Poisson process with rate λ up to time T, the algorithm generates:',
+    options: [
+      'One Poisson(λT) random variable, then places events uniformly',
+      'Inter-arrival times T_i = -ln(U_i)/λ and accumulates until sum exceeds T',
+      'Events at fixed intervals T/N',
+      'A binomial number of events then assigns random times'
+    ],
+    correctIndex: 1,
+    explanation: 'Standard simulation: generate T₁ = -ln(U₁)/λ, T₂ = -ln(U₂)/λ, ... (i.i.d. Exp(λ)). Arrival times: S_n = T₁+...+T_n. Add events while S_n ≤ T. Both methods (A and B) are valid but method B is simpler and directly exploits the memoryless property.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // random-walk (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'rw-1',
+    nodeId: 'random-walk',
+    type: 'calculation',
+    question: 'A simple random walk starts at 0. After n = 100 steps, what is the variance of the position X₁₀₀?',
+    correctAnswer: 100,
+    tolerance: 0.01,
+    explanation: 'For simple random walk with steps +1/-1 with equal probability: E[X_n] = 0, Var(X_n) = n. So Var(X_100) = 100, and the standard deviation is √100 = 10. The walk diffuses as √n away from the origin.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // hmm-definition (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'hmm-1',
+    nodeId: 'hmm-definition',
+    type: 'multiple-choice',
+    question: 'In an HMM, emission probabilities e_k(b) represent:',
+    options: [
+      'The probability of transitioning from state k to state b',
+      'The probability of observing symbol b when in hidden state k',
+      'The prior probability of state k',
+      'The probability of starting in state k and emitting b'
+    ],
+    correctIndex: 1,
+    explanation: 'Emission probability e_k(b) = P(observation = b | hidden state = k). The hidden states generate the observations according to these probabilities. The observations are what we see; the states are hidden.'
+  },
+  {
+    id: 'hmm-2',
+    nodeId: 'hmm-definition',
+    type: 'short-answer',
+    question: 'What are the three components (parameters) of an HMM?',
+    acceptableAnswers: ['transition, emission, initial', 'A, E, pi', 'transition probabilities, emission probabilities, initial state distribution'],
+    explanation: 'An HMM is defined by: (1) transition probabilities a_{ij} = P(state j next | state i now); (2) emission probabilities e_k(b) = P(observe b | in state k); (3) initial state distribution π_k = P(start in state k).'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // hmm-three-problems (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'hmm3-1',
+    nodeId: 'hmm-three-problems',
+    type: 'multiple-choice',
+    question: 'Which HMM algorithm solves the decoding problem (finding the most likely hidden path)?',
+    options: ['Forward algorithm', 'Backward algorithm', 'Viterbi algorithm', 'Baum-Welch algorithm'],
+    correctIndex: 2,
+    explanation: 'Viterbi solves decoding: finding the most likely sequence of hidden states given the observations. Forward algorithm solves evaluation: P(observations | model). Baum-Welch solves learning: estimating model parameters.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // viterbi (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'vit-1',
+    nodeId: 'viterbi',
+    type: 'multiple-choice',
+    question: 'The Viterbi algorithm uses dynamic programming where at each position i, for each state k, it stores:',
+    options: [
+      'The sum of all path probabilities ending in state k at position i',
+      'The maximum probability of any path ending in state k at position i',
+      'The probability of the observations given state k at position i',
+      'The marginal probability of being in state k at position i'
+    ],
+    correctIndex: 1,
+    explanation: 'Viterbi variable v_k(i) = max over all paths P(x_1...x_i, path ends in state k at i). This is the "max" version; the "sum" version is the Forward algorithm. Viterbi finds the single best path; Forward sums all paths.'
+  },
+  {
+    id: 'vit-2',
+    nodeId: 'viterbi',
+    type: 'short-answer',
+    question: 'Why do we use log-space in the Viterbi algorithm?',
+    acceptableAnswers: ['underflow', 'numerical underflow', 'avoid underflow', 'avoid numerical underflow', 'probabilities too small'],
+    explanation: 'Products of many small probabilities rapidly underflow to 0 in floating-point arithmetic. Working in log-space converts products to sums: log(a·b) = log(a) + log(b). The max operation is preserved: argmax log p = argmax p.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // viterbi-recurrence (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'vitr-1',
+    nodeId: 'viterbi-recurrence',
+    type: 'multiple-choice',
+    question: 'The Viterbi recurrence is v_k(i) = e_k(xᵢ) · max_l { a_{lk} · v_l(i-1) }. What does the max_l represent?',
+    options: [
+      'The sum over all previous states (like Forward)',
+      'The most likely previous state that leads to state k at position i',
+      'The emission probability of x_i in each state',
+      'The number of possible paths'
+    ],
+    correctIndex: 1,
+    explanation: 'max_l { a_{lk} · v_l(i-1) } finds the best previous state l to transition from to reach state k. The pointer ptr_k(i) = argmax_l records which state l achieved this maximum, enabling traceback.'
+  },
+  {
+    id: 'vitr-2',
+    nodeId: 'viterbi-recurrence',
+    type: 'multiple-choice',
+    question: 'How does traceback in the Viterbi algorithm work?',
+    options: [
+      'Forward through positions 1 to n, following the max emission',
+      'Backward from position n, following the stored pointer array',
+      'Sum all paths and choose the most probable',
+      'Sample from the posterior distribution'
+    ],
+    correctIndex: 1,
+    explanation: 'Traceback: start at position n with state k* = argmax_k v_k(n). Then move backward: k_{i-1} = ptr_{k_i}(i) for i = n, n-1, ..., 2. This reconstructs the most likely path in O(Kn) total time.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // forward-algorithm (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'fwd-1',
+    nodeId: 'forward-algorithm',
+    type: 'multiple-choice',
+    question: 'The Forward algorithm and Viterbi differ in that Forward uses __ while Viterbi uses __:',
+    options: [
+      'max / sum',
+      'sum / max',
+      'product / sum',
+      'sum / product'
+    ],
+    correctIndex: 1,
+    explanation: 'Forward: f_k(i) = e_k(xᵢ) · Σ_l a_{lk} · f_l(i-1) — sums over all previous states.\nViterbi: v_k(i) = e_k(xᵢ) · max_l a_{lk} · v_l(i-1) — maximises over previous states.'
+  },
+  {
+    id: 'fwd-2',
+    nodeId: 'forward-algorithm',
+    type: 'short-answer',
+    question: 'The forward variable f_k(i) represents P(x_1...x_i, π_i = k). What does summing over k at position i give you?',
+    acceptableAnswers: ['P(x_1...x_i)', 'P(observations up to position i)', 'probability of first i observations'],
+    explanation: 'Σ_k f_k(i) = P(x_1...x_i) — the probability of the first i observations under the model (summing out the hidden state at position i). At termination (i = n): Σ_k f_k(n) = P(x_1...x_n | model).'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // forward-termination (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'fwdt-1',
+    nodeId: 'forward-termination',
+    type: 'multiple-choice',
+    question: 'To compute P(observations | HMM model), the Forward algorithm termination step is:',
+    options: [
+      'max_k f_k(n) (take the maximum final state)',
+      'Σ_k f_k(n) (sum over all final states)',
+      'f_{K}(n) (use the last state only)',
+      'Σ_i Σ_k f_k(i) (sum over all positions)'
+    ],
+    correctIndex: 1,
+    explanation: 'P(x_1...x_n) = Σ_k f_k(n). We sum over all possible final hidden states, marginalising out what state we ended in. Compare Viterbi which takes max_k v_k(n) to get the probability of the single best path.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // backward-baum-welch (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'bbw-1',
+    nodeId: 'backward-baum-welch',
+    type: 'multiple-choice',
+    question: 'Baum-Welch is an application of which general algorithm?',
+    options: ['Gradient descent', 'EM (Expectation-Maximisation)', 'Newton\'s method', 'Monte Carlo'],
+    correctIndex: 1,
+    explanation: 'Baum-Welch is an EM algorithm. E-step: compute expected sufficient statistics (using forward-backward). M-step: re-estimate parameters (transition/emission probabilities) to maximise expected log-likelihood. Guaranteed to converge to a local maximum.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // hmm-applications (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'hmma-1',
+    nodeId: 'hmm-applications',
+    type: 'multiple-choice',
+    question: 'In the "dishonest casino" HMM example, what are the hidden states?',
+    options: [
+      'The outcomes of the dice (1-6)',
+      'Whether the casino is using the fair or loaded die',
+      'The number of rolls',
+      'The probability of each outcome'
+    ],
+    correctIndex: 1,
+    explanation: 'Hidden states: {Fair, Loaded}. Observations: dice outcomes {1,2,3,4,5,6}. Fair die: uniform emissions. Loaded die: biased towards 6. Viterbi finds when the casino switched dice; Forward computes total probability.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // distance-methods (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'dm-1',
+    nodeId: 'distance-methods',
+    type: 'multiple-choice',
+    question: 'An ultrametric tree satisfies the property that for any three leaves A, B, C:',
+    options: [
+      'D(A,B) + D(B,C) ≥ D(A,C)',
+      'D(A,C) ≤ max(D(A,B), D(B,C))',
+      'D(A,B) = D(B,C) = D(A,C)',
+      'All branch lengths are equal'
+    ],
+    correctIndex: 1,
+    explanation: 'An ultrametric satisfies: D(A,C) ≤ max(D(A,B), D(B,C)). Equivalently, the two largest of the three pairwise distances are equal. Ultrametric trees assume the molecular clock — all leaves are equidistant from the root.'
+  },
+  {
+    id: 'dm-2',
+    nodeId: 'distance-methods',
+    type: 'calculation',
+    question: 'How many distinct unrooted tree topologies exist for 4 taxa?',
+    correctAnswer: 3,
+    tolerance: 0,
+    explanation: 'For n taxa, the number of unrooted topologies is (2n-5)!! = 1·3·5·...·(2n-5). For n=4: (2·4-5)!! = 3!! = 1·3 = 3. The three topologies are: (AB,CD), (AC,BD), (AD,BC).'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // upgma-algorithm (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'upg-alg-1',
+    nodeId: 'upgma-algorithm',
+    type: 'multiple-choice',
+    question: 'When UPGMA merges clusters i and j, the distance from the new cluster (ij) to another cluster k is:',
+    options: [
+      'min(D(i,k), D(j,k))',
+      '(|i|·D(i,k) + |j|·D(j,k)) / (|i| + |j|)',
+      '(D(i,k) + D(j,k)) / 2',
+      'max(D(i,k), D(j,k))'
+    ],
+    correctIndex: 1,
+    explanation: 'UPGMA uses weighted average distance: D((ij),k) = (|i|·D(i,k) + |j|·D(j,k)) / (|i|+|j|). When |i| = |j| = 1, this simplifies to the arithmetic mean. The weighting by cluster size is the "Unweighted" in UPGMA (it gives equal weight to each sequence).'
+  },
+  {
+    id: 'upg-alg-2',
+    nodeId: 'upgma-algorithm',
+    type: 'multiple-choice',
+    question: 'In UPGMA, when clusters i and j are merged at distance D(i,j), the branch length from i (and from j) to the new internal node is:',
+    options: [
+      'D(i,j)',
+      'D(i,j) / 2',
+      'D(i,j) · 2',
+      'Depends on the subtree rooted at i'
+    ],
+    correctIndex: 1,
+    explanation: 'UPGMA assumes the molecular clock: each cluster node is equidistant from its leaves. The branch to the new node is D(i,j)/2 for each. If cluster i had a previous internal node at height h_i, the new branch from i\'s cluster root to the merged node has length D(i,j)/2 - h_i.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // upgma (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'upg-1',
+    nodeId: 'upgma',
+    type: 'multiple-choice',
+    question: 'UPGMA can give an incorrect tree topology when:',
+    options: [
+      'The distance matrix has negative entries',
+      'The evolutionary rates differ significantly across lineages (no molecular clock)',
+      'There are only 3 taxa',
+      'The sequences are DNA'
+    ],
+    correctIndex: 1,
+    explanation: 'UPGMA assumes a molecular clock (all lineages evolve at the same rate). When rates differ across branches, UPGMA will give a wrong topology. Neighbour joining was developed to handle unequal rates.'
+  },
+  {
+    id: 'upg-2',
+    nodeId: 'upgma',
+    type: 'short-answer',
+    question: 'What property of UPGMA-constructed trees means all leaves are equidistant from the root?',
+    acceptableAnswers: ['ultrametric', 'ultrametricity', 'molecular clock', 'ultrametric property'],
+    explanation: 'UPGMA produces ultrametric trees. The ultrametric property means all leaves are equidistant from the root — this is equivalent to assuming a molecular clock (all lineages evolve at the same rate).'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // neighbour-joining (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'nj-1',
+    nodeId: 'neighbour-joining',
+    type: 'multiple-choice',
+    question: 'Neighbour joining corrects for differing evolutionary rates using the Q-matrix, where Q(i,j) =',
+    options: [
+      'D(i,j) directly',
+      '(n-2)·D(i,j) - r_i - r_j where r_i = Σ_k D(i,k)',
+      'D(i,j) / (r_i + r_j)',
+      'max(r_i, r_j) - D(i,j)'
+    ],
+    correctIndex: 1,
+    explanation: 'Q(i,j) = (n-2)·D(i,j) - r_i - r_j where r_i = Σ_k D(i,k) is the net divergence (sum of distances from i to all others). NJ finds the pair with minimum Q(i,j) to merge — correcting for long-branch attraction.'
+  },
+  {
+    id: 'nj-2',
+    nodeId: 'neighbour-joining',
+    type: 'multiple-choice',
+    question: 'Compared to UPGMA, a key advantage of Neighbour Joining is:',
+    options: [
+      'It is faster to compute',
+      'It produces rooted trees without needing an outgroup',
+      'It can reconstruct the correct topology even when rates differ across lineages',
+      'It uses maximum likelihood for branch length estimation'
     ],
     correctIndex: 2,
-    explanation: 'The rank of a matrix cannot exceed either its number of rows or columns. For a 3×4 matrix, rank ≤ min(3,4) = 3.'
-  },
-  {
-    id: 'la-3',
-    nodeId: 'linear-algebra-foundations',
-    type: 'multiple-choice',
-    question: 'The null space (kernel) of matrix A consists of:',
-    options: [
-      'All vectors b such that Ax = b has a solution',
-      'All vectors x such that Ax = 0',
-      'The set of rows of A',
-      'All eigenvalues of A'
-    ],
-    correctIndex: 1,
-    explanation: 'The null space (kernel) of A is {x : Ax = 0}. Its dimension is the nullity of A, and by the rank-nullity theorem: rank(A) + nullity(A) = number of columns.'
+    explanation: 'NJ produces additive trees (correct topology when the distance matrix is additive), even without a molecular clock. UPGMA requires the molecular clock. However, NJ still produces an unrooted tree — an outgroup is needed for rooting.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // matrix-operations (3 questions)
+  // parsimony-sites (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'mo-1',
-    nodeId: 'matrix-operations',
+    id: 'pars-sites-1',
+    nodeId: 'parsimony-sites',
     type: 'multiple-choice',
-    question: 'Given A = [[1,2],[3,4]] and B = [[5,6],[7,8]], what is the (1,1) entry (0-indexed row 0, col 0) of AB?',
+    question: 'Which alignment column is parsimony-informative for 4 sequences?',
     options: [
-      '5',
-      '19',
-      '23',
-      '26'
-    ],
-    correctIndex: 1,
-    explanation: '(AB)₀₀ = A row 0 · B col 0 = (1)(5) + (2)(7) = 5 + 14 = 19.'
-  },
-  {
-    id: 'mo-2',
-    nodeId: 'matrix-operations',
-    type: 'multiple-choice',
-    question: 'The transpose of an m×n matrix A is:',
-    options: [
-      'An m×n matrix with rows and columns swapped',
-      'An n×m matrix where (Aᵀ)ᵢⱼ = Aⱼᵢ',
-      'The inverse of A',
-      'A matrix where every entry is negated'
-    ],
-    correctIndex: 1,
-    explanation: 'The transpose Aᵀ is n×m, and its (i,j) entry equals the (j,i) entry of A. In other words, rows become columns and columns become rows.'
-  },
-  {
-    id: 'mo-3',
-    nodeId: 'matrix-operations',
-    type: 'multiple-choice',
-    question: 'For square matrices A and B (both invertible), (AB)⁻¹ equals:',
-    options: [
-      'A⁻¹B⁻¹',
-      'B⁻¹A⁻¹',
-      '(BA)⁻¹',
-      'AᵀBᵀ'
-    ],
-    correctIndex: 1,
-    explanation: 'The inverse of a product reverses the order: (AB)⁻¹ = B⁻¹A⁻¹. This is analogous to putting on socks then shoes — you must remove shoes before socks.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // eigenvalues-eigenvectors (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'ev-1',
-    nodeId: 'eigenvalues-eigenvectors',
-    type: 'multiple-choice',
-    question: 'A vector v is an eigenvector of matrix A if:',
-    options: [
-      'Av = 0',
-      'Av = λv for some scalar λ',
-      'Av = v for all scalars',
-      'v is in the null space of A'
-    ],
-    correctIndex: 1,
-    explanation: 'An eigenvector v (non-zero) satisfies Av = λv, meaning A only scales v by the eigenvalue λ without changing its direction.'
-  },
-  {
-    id: 'ev-2',
-    nodeId: 'eigenvalues-eigenvectors',
-    type: 'multiple-choice',
-    question: 'The eigenvalues of A = [[3,0],[0,5]] are:',
-    options: [
-      '3 and 5',
-      '15 and 0',
-      '8 and 2',
-      '1 and 1'
-    ],
-    correctIndex: 0,
-    explanation: 'For a diagonal matrix, the eigenvalues are the diagonal entries. Here λ₁ = 3 and λ₂ = 5, with eigenvectors (1,0) and (0,1) respectively.'
-  },
-  {
-    id: 'ev-3',
-    nodeId: 'eigenvalues-eigenvectors',
-    type: 'multiple-choice',
-    question: 'Which of the following is true about the eigenvalues of a real symmetric matrix?',
-    options: [
-      'They are always complex',
-      'They are always real',
-      'They are always positive',
-      'They are always distinct'
-    ],
-    correctIndex: 1,
-    explanation: 'By the spectral theorem, real symmetric matrices always have real eigenvalues. Their eigenvectors corresponding to distinct eigenvalues are also orthogonal.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // differential-equations-intro (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'de-1',
-    nodeId: 'differential-equations-intro',
-    type: 'multiple-choice',
-    question: 'The order of the ODE d³y/dx³ + 2(dy/dx) = x is:',
-    options: [
-      '1',
-      '2',
-      '3',
-      '4'
+      'A, A, A, A (all same)',
+      'A, A, A, G (one different)',
+      'A, A, G, G (two groups of two)',
+      'A, G, C, T (all different)'
     ],
     correctIndex: 2,
-    explanation: 'The order of a differential equation is the order of the highest derivative present. Here the highest derivative is d³y/dx³ (third order), so the ODE is third order.'
+    explanation: 'A site is parsimony-informative if at least 2 character states each appear at least 2 times. Column A,A,G,G: A appears twice, G appears twice → informative. Column A,A,A,G: only G appears once → uninformative. Column A,G,C,T: no state appears twice → uninformative.'
   },
   {
-    id: 'de-2',
-    nodeId: 'differential-equations-intro',
-    type: 'multiple-choice',
-    question: 'The general solution of dy/dx = ky (k constant, k ≠ 0) is:',
-    options: [
-      'y = kx + C',
-      'y = Ce^(kx)',
-      'y = k·ln(x) + C',
-      'y = x^k + C'
-    ],
-    correctIndex: 1,
-    explanation: 'Separating: dy/y = k dx, integrating gives ln|y| = kx + C₀, so y = Ce^(kx). This models exponential growth (k>0) or decay (k<0).'
-  },
-  {
-    id: 'de-3',
-    nodeId: 'differential-equations-intro',
-    type: 'multiple-choice',
-    question: 'An equilibrium (fixed point) of the ODE dx/dt = f(x) satisfies:',
-    options: [
-      'x = 0',
-      'f(x) = 1',
-      'f(x) = 0',
-      'dx/dt = x'
-    ],
-    correctIndex: 2,
-    explanation: 'At an equilibrium, the state does not change over time, so dx/dt = 0. This means f(x*) = 0 at the equilibrium point x*.'
+    id: 'pars-sites-2',
+    nodeId: 'parsimony-sites',
+    type: 'short-answer',
+    question: 'Why don\'t invariant sites (all sequences have the same character) contribute to parsimony tree selection?',
+    acceptableAnswers: ['they give the same score for all trees', 'all topologies require 0 mutations', 'parsimony score is 0 for all trees'],
+    explanation: 'For invariant sites, the parsimony score is 0 for every possible tree topology — no mutations are required. Since all topologies have the same score for invariant sites, these sites provide no discriminating information and don\'t affect which topology is preferred.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // linear-odes (3 questions)
+  // parsimony (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'lo-1',
-    nodeId: 'linear-odes',
+    id: 'par-1',
+    nodeId: 'parsimony',
     type: 'multiple-choice',
-    question: 'The ODE y\' + P(x)y = Q(x) is a first-order linear ODE. Its integrating factor is:',
+    question: 'Maximum parsimony chooses the phylogenetic tree that:',
     options: [
-      'e^(∫Q(x)dx)',
-      'e^(∫P(x)dx)',
-      '1/P(x)',
-      'P(x)/Q(x)'
+      'Has the longest total branch length',
+      'Requires the fewest evolutionary changes (mutations) to explain the data',
+      'Maximises the likelihood of the sequence data',
+      'Minimises pairwise distances between sequences'
     ],
     correctIndex: 1,
-    explanation: 'Multiplying both sides by μ(x) = e^(∫P(x)dx) makes the left side an exact derivative: d/dx[μ(x)y] = μ(x)Q(x), which can then be integrated directly.'
+    explanation: 'Parsimony applies Occam\'s razor: prefer the hypothesis requiring the fewest assumptions. For trees, this means the topology requiring the minimum number of mutations to explain the observed sequence data.'
   },
   {
-    id: 'lo-2',
-    nodeId: 'linear-odes',
+    id: 'par-2',
+    nodeId: 'parsimony',
     type: 'multiple-choice',
-    question: 'The characteristic equation of y\'\' - 5y\' + 6y = 0 is:',
+    question: 'For 10 taxa, the number of distinct unrooted tree topologies is approximately:',
     options: [
-      'r² - 5r + 6 = 0',
-      'r² + 5r + 6 = 0',
-      'r² - 5r - 6 = 0',
-      'r - 5 + 6 = 0'
-    ],
-    correctIndex: 0,
-    explanation: 'Substituting y = e^(rx) gives the characteristic equation r² - 5r + 6 = 0, which factors as (r-2)(r-3) = 0. The general solution is y = C₁e^(2x) + C₂e^(3x).'
-  },
-  {
-    id: 'lo-3',
-    nodeId: 'linear-odes',
-    type: 'multiple-choice',
-    question: 'For y\' + 2y = 0 with y(0) = 3, the solution is:',
-    options: [
-      'y = 3e^(2x)',
-      'y = 2e^(-3x)',
-      'y = 3e^(-2x)',
-      'y = e^(-2x) + 3'
-    ],
-    correctIndex: 2,
-    explanation: 'The general solution is y = Ce^(-2x). Applying y(0) = 3: 3 = Ce^0 = C. So y = 3e^(-2x).'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // systems-of-odes (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'so-1',
-    nodeId: 'systems-of-odes',
-    type: 'multiple-choice',
-    question: 'For the linear system x\' = Ax, the nature of the equilibrium at the origin depends on:',
-    options: [
-      'The determinant of A only',
-      'The trace of A only',
-      'The eigenvalues of A',
-      'The rank of A'
-    ],
-    correctIndex: 2,
-    explanation: 'The stability and type of equilibrium (node, spiral, saddle, centre) are determined by the eigenvalues of A. Real parts determine growth/decay; imaginary parts indicate oscillation.'
-  },
-  {
-    id: 'so-2',
-    nodeId: 'systems-of-odes',
-    type: 'multiple-choice',
-    question: 'If the eigenvalues of A are λ₁ = -1 and λ₂ = -3 (both negative real), the equilibrium is a:',
-    options: [
-      'Unstable node',
-      'Stable spiral',
-      'Saddle point',
-      'Stable node'
+      '100',
+      '2,000,000',
+      '2 million',
+      'More than 2 million'
     ],
     correctIndex: 3,
-    explanation: 'Both eigenvalues are real and negative, so trajectories decay to the origin — a stable node. A saddle requires eigenvalues of opposite sign; a spiral requires complex eigenvalues.'
-  },
-  {
-    id: 'so-3',
-    nodeId: 'systems-of-odes',
-    type: 'multiple-choice',
-    question: 'Eigenvalues λ = ±2i (purely imaginary) give an equilibrium that is a:',
-    options: [
-      'Stable spiral',
-      'Unstable node',
-      'Centre (neutrally stable)',
-      'Saddle point'
-    ],
-    correctIndex: 2,
-    explanation: 'Purely imaginary eigenvalues (zero real part) give closed elliptical orbits around the equilibrium — a centre. The system neither grows nor decays.'
+    explanation: 'For n=10: (2·10-5)!! = 15!! = 2,027,025 topologies. For n=50, there are ~10^74 topologies — far too many to enumerate. This is why heuristic searches (NNI, SPR) are needed for large datasets.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // numerical-methods-odes (3 questions)
+  // fitch-algorithm (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'nm-1',
-    nodeId: 'numerical-methods-odes',
+    id: 'fitch-1',
+    nodeId: 'fitch-algorithm',
     type: 'multiple-choice',
-    question: 'Euler\'s method approximates the solution of y\' = f(x,y) by:',
+    question: 'In the Fitch algorithm, at an internal node with children having character sets {A,G} and {G,T}:',
     options: [
-      'yₙ₊₁ = yₙ + h·f(xₙ, yₙ)',
-      'yₙ₊₁ = yₙ + h·f(xₙ₊₁, yₙ₊₁)',
-      'yₙ₊₁ = yₙ·e^(hf)',
-      'yₙ₊₁ = yₙ + (h/2)·(f(xₙ,yₙ) + f(xₙ₊₁,yₙ₊₁))'
+      'The set is {A,G,T} (union) and the parsimony cost increases by 1',
+      'The set is {G} (intersection) and the parsimony cost stays the same',
+      'The set is {G} (intersection) and the cost increases by 1',
+      'The set is {A,G} (left child set) and cost stays the same'
+    ],
+    correctIndex: 1,
+    explanation: 'Fitch rule: if sets overlap (intersection non-empty), take the intersection with no cost increase. {A,G} ∩ {G,T} = {G} ≠ ∅, so the parent set is {G} at no extra cost. If disjoint, take the union and add 1 to the parsimony score.'
+  },
+  {
+    id: 'fitch-2',
+    nodeId: 'fitch-algorithm',
+    type: 'multiple-choice',
+    question: 'In Fitch, if two children have disjoint character sets {A} and {T}:',
+    options: [
+      'Set is {A} ∩ {T} = ∅, cost +1, parent set = {} (error)',
+      'Set is {A} ∪ {T} = {A,T}, cost +1',
+      'Set is {A} ∩ {T} = {A,T}, cost 0',
+      'Set is {A}, cost 0 (pick the left child)'
+    ],
+    correctIndex: 1,
+    explanation: 'If sets are disjoint (intersection empty), take the union and add 1 to the parsimony score: parent set = {A,T}, cost += 1. This +1 represents a mutation required at this node. The pre-order traceback then assigns actual ancestral states.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // parsimony-search (1 question)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'pars-search-1',
+    nodeId: 'parsimony-search',
+    type: 'multiple-choice',
+    question: 'NNI (nearest-neighbour interchange) modifies a tree by:',
+    options: [
+      'Removing one branch and inserting it elsewhere',
+      'Swapping two subtrees across an internal branch',
+      'Adding a new leaf to every possible position',
+      'Randomly rearranging all branches'
+    ],
+    correctIndex: 1,
+    explanation: 'NNI: for each internal branch, swap one of the two subtrees on one side with one of the two subtrees on the other side. Each internal branch generates 2 alternative trees. NNI explores the neighbourhood of the current tree.'
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // evolutionary-models (2 questions)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'evo-1',
+    nodeId: 'evolutionary-models',
+    type: 'multiple-choice',
+    question: 'In the Jukes-Cantor (JC69) model, the probability of observing the same base after time t is:',
+    options: [
+      '1/4 + (3/4)·e^{-4μt}',
+      '1/4·(1 - e^{-4μt})',
+      'e^{-μt}',
+      '1 - 3μt'
     ],
     correctIndex: 0,
-    explanation: 'Euler\'s (forward/explicit) method uses the tangent line at the current point: yₙ₊₁ = yₙ + h·f(xₙ,yₙ). It has local truncation error O(h²) and global error O(h).'
+    explanation: 'JC69 has all substitution rates equal to μ. P(same base | time t) = 1/4 + (3/4)·e^{-4μt}. As t→∞, P→1/4 (random base composition). At t=0, P=1. Each of the 3 other bases has P = 1/4 - (1/4)·e^{-4μt}.'
   },
   {
-    id: 'nm-2',
-    nodeId: 'numerical-methods-odes',
-    type: 'multiple-choice',
-    question: 'The Runge-Kutta RK4 method has global error of order:',
-    options: [
-      'O(h)',
-      'O(h²)',
-      'O(h³)',
-      'O(h⁴)'
-    ],
-    correctIndex: 3,
-    explanation: 'RK4 is a fourth-order method with global error O(h⁴). Halving the step size reduces the error by a factor of ~16, making it much more accurate than Euler\'s O(h) method.'
-  },
-  {
-    id: 'nm-3',
-    nodeId: 'numerical-methods-odes',
-    type: 'multiple-choice',
-    question: 'Reducing the step size h in Euler\'s method:',
-    options: [
-      'Always leads to exact solutions',
-      'Has no effect on accuracy',
-      'Improves accuracy but increases computation time',
-      'Decreases accuracy due to more steps'
-    ],
-    correctIndex: 2,
-    explanation: 'Smaller h gives a better linear approximation at each step, reducing accumulated error. However, more steps are needed to reach the same endpoint, increasing computation. Very small h can also accumulate floating-point rounding error.'
+    id: 'evo-2',
+    nodeId: 'evolutionary-models',
+    type: 'short-answer',
+    question: 'What is the rate matrix Q in a continuous-time Markov model, and what is its key property for diagonal entries?',
+    acceptableAnswers: ['diagonal entries are negative sum of row', 'Q_{ii} = -sum of off-diagonal', 'rows sum to 0', 'diagonal is negative row sum'],
+    explanation: 'Q is the instantaneous rate matrix where Q_{ij} (i≠j) is the rate of mutation i→j. Diagonal: Q_{ii} = -Σ_{j≠i} Q_{ij} (so rows sum to 0). The transition probability matrix at time t is P(t) = e^{Qt}.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // optimisation-intro (3 questions)
+  // rate-matrix (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'oi-1',
-    nodeId: 'optimisation-intro',
+    id: 'rm-1',
+    nodeId: 'rate-matrix',
     type: 'multiple-choice',
-    question: 'Gradient descent updates parameters by:',
+    question: 'Why can\'t we estimate both the rate μ and the time t separately from a pair of sequences?',
     options: [
-      'Moving in the direction of the gradient',
-      'Moving opposite to the gradient, scaled by a learning rate',
-      'Setting all parameters to zero',
-      'Adding the Hessian to the parameters'
+      'Because the JC69 model is too simple',
+      'Because only the product μt appears in the transition probabilities P(t)',
+      'Because sequences are too short',
+      'Because maximum likelihood is undefined for this problem'
     ],
     correctIndex: 1,
-    explanation: 'To minimise a function, gradient descent moves opposite to the gradient (steepest ascent direction): θ ← θ − α∇f(θ), where α is the learning rate.'
+    explanation: 'P(t) = e^{μQt} depends only on the product μt. Doubling μ and halving t gives the same P(t). From observed sequences, we can estimate μt (evolutionary distance) but not μ or t individually without additional information (e.g., a fossil record for calibration).'
   },
   {
-    id: 'oi-2',
-    nodeId: 'optimisation-intro',
-    type: 'multiple-choice',
-    question: 'A necessary condition for x* to be a local minimum of a differentiable function f is:',
-    options: [
-      'f\'(x*) > 0',
-      'f\'(x*) = 0',
-      'f\'\' (x*) < 0',
-      'f(x*) = 0'
-    ],
-    correctIndex: 1,
-    explanation: 'At a local extremum of a differentiable function, the first derivative (gradient) must be zero. This is a necessary but not sufficient condition — it identifies critical points.'
-  },
-  {
-    id: 'oi-3',
-    nodeId: 'optimisation-intro',
-    type: 'multiple-choice',
-    question: 'The second derivative test says x* is a local minimum if:',
-    options: [
-      'f\'(x*) = 0 and f\'\' (x*) < 0',
-      'f\'(x*) = 0 and f\'\' (x*) > 0',
-      'f\'(x*) > 0 and f\'\' (x*) > 0',
-      'f(x*) is the smallest value globally'
-    ],
-    correctIndex: 1,
-    explanation: 'A critical point x* with f\'(x*)=0 is a local minimum when f\'\' (x*) > 0 (concave up). If f\'\' (x*) < 0 it is a local maximum; if f\'\' (x*) = 0 the test is inconclusive.'
+    id: 'rm-2',
+    nodeId: 'rate-matrix',
+    type: 'calculation',
+    question: 'Under JC69 with μ = 0.1 per unit time, what is P(same base after t = 1)? Use the formula P = 1/4 + (3/4)·e^{-4μt}. Give to 3 decimal places.',
+    correctAnswer: 0.586,
+    tolerance: 0.005,
+    explanation: '4μt = 4·0.1·1 = 0.4. e^{-0.4} ≈ 0.6703.\nP = 0.25 + 0.75·0.6703 = 0.25 + 0.5027 ≈ 0.753.\nActually: P = 1/4 + 3/4·e^{-0.4} = 0.25 + 0.75·0.6703 = 0.7527. Note: re-checking: 1/4 + 3/4 * 0.6703 = 0.25 + 0.5027 = 0.7527.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // dynamic-programming (3 questions)
+  // ml-trees (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'dyn-1',
-    nodeId: 'dynamic-programming',
+    id: 'ml-1',
+    nodeId: 'ml-trees',
     type: 'multiple-choice',
-    question: 'Dynamic programming is applicable when a problem exhibits:',
+    question: 'A key advantage of maximum likelihood over parsimony for tree inference is:',
     options: [
-      'No repeated sub-problems',
-      'Optimal substructure and overlapping subproblems',
-      'Only greedy choices',
-      'Polynomial output size'
+      'ML is always faster to compute',
+      'ML uses an explicit model of evolution and is statistically consistent',
+      'ML always finds the global optimum',
+      'ML requires fewer sequences'
     ],
     correctIndex: 1,
-    explanation: 'DP applies when: (1) optimal substructure — an optimal solution contains optimal solutions to subproblems, and (2) overlapping subproblems — the same subproblems recur, making memoisation worthwhile.'
+    explanation: 'ML is statistically consistent: given enough data, it converges to the true tree. Parsimony is not consistent under the Felsenstein zone (long-branch attraction). ML also accounts for multiple hits (a site changing back), which parsimony ignores. Neither method is guaranteed to find the global optimum (NP-hard).'
   },
   {
-    id: 'dyn-2',
-    nodeId: 'dynamic-programming',
-    type: 'multiple-choice',
-    question: 'Memoisation in dynamic programming refers to:',
-    options: [
-      'Writing comments in code',
-      'Storing and reusing results of previously solved subproblems',
-      'Sorting the input before solving',
-      'Splitting the problem into independent halves'
-    ],
-    correctIndex: 1,
-    explanation: 'Memoisation (top-down DP) stores the result of each subproblem the first time it is solved, so subsequent calls return the cached value in O(1) instead of recomputing.'
-  },
-  {
-    id: 'dyn-3',
-    nodeId: 'dynamic-programming',
-    type: 'multiple-choice',
-    question: 'The Bellman equation expresses the value of a state as:',
-    options: [
-      'The average reward across all states',
-      'The maximum reward achievable in one step',
-      'The immediate reward plus the discounted value of the next state',
-      'The transition probability times the reward'
-    ],
-    correctIndex: 2,
-    explanation: 'The Bellman optimality equation: V*(s) = max_a [R(s,a) + γ · V*(s\')], which decomposes the value of a state into an immediate reward and the discounted value of successor states.'
+    id: 'ml-2',
+    nodeId: 'ml-trees',
+    type: 'short-answer',
+    question: 'What is a reason why ML tree search does not guarantee finding the globally optimal tree?',
+    acceptableAnswers: ['NP-hard', 'heuristic', 'local optima', 'too many topologies', 'exponential search space', 'hill climbing'],
+    explanation: 'The ML tree search is NP-hard: there are an exponential number of topologies. Heuristic searches (NNI, SPR, TBR) explore the neighbourhood of the current tree but can get stuck in local optima of the likelihood surface.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // network-models (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'netm-1',
-    nodeId: 'network-models',
-    type: 'multiple-choice',
-    question: 'In an Erdős–Rényi random graph G(n,p), each edge is included:',
-    options: [
-      'Exactly once with probability 1',
-      'With probability p, independently of other edges',
-      'Based on the degree of both endpoints',
-      'Only if both endpoints have fewer than p neighbours'
-    ],
-    correctIndex: 1,
-    explanation: 'The Erdős–Rényi model G(n,p) places an edge between each pair of vertices independently with probability p. The expected number of edges is p·n(n-1)/2.'
-  },
-  {
-    id: 'netm-2',
-    nodeId: 'network-models',
-    type: 'multiple-choice',
-    question: 'A scale-free network has a degree distribution that follows:',
-    options: [
-      'A Poisson distribution',
-      'A uniform distribution',
-      'A Gaussian (normal) distribution',
-      'A power law P(k) ∝ k^(-γ)'
-    ],
-    correctIndex: 3,
-    explanation: 'Scale-free networks (e.g. Barabási–Albert model) have a power-law degree distribution P(k) ∝ k^(-γ). This means a few hubs have very high degree while most nodes have low degree.'
-  },
-  {
-    id: 'netm-3',
-    nodeId: 'network-models',
-    type: 'multiple-choice',
-    question: 'Preferential attachment in the Barabási–Albert model means new nodes connect to existing nodes:',
-    options: [
-      'Uniformly at random',
-      'With probability proportional to their current degree',
-      'Only to nodes with the minimum degree',
-      'Based on geographic proximity'
-    ],
-    correctIndex: 1,
-    explanation: '"Rich get richer": in preferential attachment, a new node connects to node i with probability proportional to its degree kᵢ. This generates the power-law degree distribution characteristic of scale-free networks.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // simulation-methods (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'sm-1',
-    nodeId: 'simulation-methods',
-    type: 'multiple-choice',
-    question: 'Monte Carlo simulation estimates quantities by:',
-    options: [
-      'Solving equations symbolically',
-      'Using repeated random sampling to approximate results',
-      'Optimising a cost function numerically',
-      'Running experiments on physical hardware'
-    ],
-    correctIndex: 1,
-    explanation: 'Monte Carlo methods use random sampling to estimate mathematical quantities — for example, estimating π by sampling random points in a square and checking if they fall in an inscribed circle.'
-  },
-  {
-    id: 'sm-2',
-    nodeId: 'simulation-methods',
-    type: 'multiple-choice',
-    question: 'The Gillespie algorithm is used to simulate:',
-    options: [
-      'Deterministic continuous ODEs',
-      'Stochastic discrete chemical or biological reaction systems',
-      'Neural network training',
-      'Graph shortest-path problems'
-    ],
-    correctIndex: 1,
-    explanation: 'The Gillespie algorithm performs exact stochastic simulation of systems with discrete molecules and random reaction events — commonly used in systems biology and chemical kinetics.'
-  },
-  {
-    id: 'sm-3',
-    nodeId: 'simulation-methods',
-    type: 'multiple-choice',
-    question: 'In an agent-based model, the overall system behaviour emerges from:',
-    options: [
-      'A set of global differential equations',
-      'The interaction of individual autonomous agents following local rules',
-      'Random sampling of a known distribution',
-      'Solving a large linear system'
-    ],
-    correctIndex: 1,
-    explanation: 'Agent-based models (ABMs) simulate individual agents with their own states and rules. Macroscopic patterns — such as traffic jams, disease spread, or market dynamics — emerge from the agents\' interactions, without being explicitly programmed.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // odes-and-biology (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'ob-1',
-    nodeId: 'odes-and-biology',
-    type: 'multiple-choice',
-    question: 'In the logistic growth model dN/dt = rN(1 - N/K), K represents:',
-    options: [
-      'The initial population size',
-      'The intrinsic growth rate',
-      'The carrying capacity of the environment',
-      'The time to reach maximum growth'
-    ],
-    correctIndex: 2,
-    explanation: 'K is the carrying capacity — the maximum population size the environment can support. As N → K, the growth rate dN/dt → 0, so the population stabilises at K.'
-  },
-  {
-    id: 'ob-2',
-    nodeId: 'odes-and-biology',
-    type: 'multiple-choice',
-    question: 'In the SIR model, the basic reproduction number R₀ is:',
-    options: [
-      'The initial number of infected individuals',
-      'The average number of secondary infections caused by one infectious individual in a fully susceptible population',
-      'The recovery rate',
-      'The fraction of the population that is immune'
-    ],
-    correctIndex: 1,
-    explanation: 'R₀ (pronounced "R-naught") quantifies disease spread. R₀ > 1 means an epidemic can grow; R₀ < 1 means it dies out. For the basic SIR model, R₀ = β/(γ) where β is transmission rate and γ is recovery rate.'
-  },
-  {
-    id: 'ob-3',
-    nodeId: 'odes-and-biology',
-    type: 'multiple-choice',
-    question: 'The Lotka-Volterra predator-prey model predicts:',
-    options: [
-      'Both populations grow exponentially',
-      'Predator population grows while prey declines to extinction',
-      'Oscillating cycles in both predator and prey populations',
-      'Both populations converge to a fixed point immediately'
-    ],
-    correctIndex: 2,
-    explanation: 'The Lotka-Volterra equations produce neutrally stable oscillations: when prey is abundant, predators increase; as predators increase, prey declines; fewer prey leads to predator decline; then prey recovers — forming a cycle.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // linear-regression (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'lr-1',
-    nodeId: 'linear-regression',
-    type: 'multiple-choice',
-    question: 'Ordinary Least Squares (OLS) regression minimises:',
-    options: [
-      'The sum of absolute residuals',
-      'The maximum residual',
-      'The sum of squared residuals',
-      'The product of residuals'
-    ],
-    correctIndex: 2,
-    explanation: 'OLS finds the line (or hyperplane) that minimises Σ(yᵢ − ŷᵢ)², the sum of squared differences between observed and predicted values. Squaring penalises large errors more than small ones.'
-  },
-  {
-    id: 'lr-2',
-    nodeId: 'linear-regression',
-    type: 'multiple-choice',
-    question: 'In simple linear regression ŷ = β₀ + β₁x, R² measures:',
-    options: [
-      'The slope of the regression line',
-      'The proportion of variance in y explained by x',
-      'The probability that the model is correct',
-      'The number of data points required'
-    ],
-    correctIndex: 1,
-    explanation: 'R² (coefficient of determination) = 1 − SS_res/SS_tot. It ranges from 0 to 1, representing the fraction of variance in y accounted for by the model. R² = 1 indicates a perfect fit.'
-  },
-  {
-    id: 'lr-3',
-    nodeId: 'linear-regression',
-    type: 'multiple-choice',
-    question: 'Multicollinearity in multiple regression refers to:',
-    options: [
-      'Having too many data points',
-      'Predictor variables being highly correlated with each other',
-      'The response variable being non-linear',
-      'Residuals being non-normally distributed'
-    ],
-    correctIndex: 1,
-    explanation: 'Multicollinearity occurs when predictor variables are highly correlated, making it difficult to isolate individual effects. It inflates standard errors of coefficients but does not necessarily bias predictions.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // classification (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'cl-1',
-    nodeId: 'classification',
-    type: 'multiple-choice',
-    question: 'Logistic regression outputs:',
-    options: [
-      'A continuous unbounded prediction',
-      'A probability between 0 and 1 via the sigmoid function',
-      'The class with the highest count in training data',
-      'A decision tree structure'
-    ],
-    correctIndex: 1,
-    explanation: 'Logistic regression applies the sigmoid function σ(z) = 1/(1+e^(-z)) to a linear combination of features, mapping any real value to (0,1), interpretable as a class probability.'
-  },
-  {
-    id: 'cl-2',
-    nodeId: 'classification',
-    type: 'multiple-choice',
-    question: 'A confusion matrix for a binary classifier has True Positives (TP), False Positives (FP), True Negatives (TN), and False Negatives (FN). Precision is:',
-    options: [
-      'TP / (TP + FN)',
-      'TP / (TP + FP)',
-      '(TP + TN) / (TP + TN + FP + FN)',
-      'FP / (FP + TN)'
-    ],
-    correctIndex: 1,
-    explanation: 'Precision = TP/(TP+FP) — of all instances predicted positive, how many truly were? Recall = TP/(TP+FN). Accuracy = (TP+TN)/total. Precision and recall trade off against each other.'
-  },
-  {
-    id: 'cl-3',
-    nodeId: 'classification',
-    type: 'multiple-choice',
-    question: 'k-Nearest Neighbours (kNN) classifies a new point by:',
-    options: [
-      'Fitting a logistic curve to the nearest k points',
-      'Finding the k closest training points and taking a majority vote of their labels',
-      'Computing a decision boundary using k support vectors',
-      'Splitting the feature space into k equal regions'
-    ],
-    correctIndex: 1,
-    explanation: 'kNN is a non-parametric method: it finds the k training examples nearest to the query point (by Euclidean or other distance) and assigns the most common class label among them.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // neural-networks-intro (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'nn-1',
-    nodeId: 'neural-networks-intro',
-    type: 'multiple-choice',
-    question: 'The purpose of an activation function in a neural network is to:',
-    options: [
-      'Normalise the input data',
-      'Introduce non-linearity so the network can learn complex patterns',
-      'Initialise the weights to small values',
-      'Reduce the number of parameters'
-    ],
-    correctIndex: 1,
-    explanation: 'Without non-linear activation functions, stacking multiple linear layers is equivalent to a single linear transformation. Non-linear activations (ReLU, sigmoid, tanh) allow networks to approximate arbitrary functions.'
-  },
-  {
-    id: 'nn-2',
-    nodeId: 'neural-networks-intro',
-    type: 'multiple-choice',
-    question: 'Backpropagation computes:',
-    options: [
-      'The forward pass output probabilities',
-      'Gradients of the loss with respect to each weight using the chain rule',
-      'The optimal learning rate automatically',
-      'A new architecture with fewer layers'
-    ],
-    correctIndex: 1,
-    explanation: 'Backpropagation applies the chain rule of calculus to efficiently compute ∂L/∂wᵢ for every weight in the network, enabling gradient descent to update all weights.'
-  },
-  {
-    id: 'nn-3',
-    nodeId: 'neural-networks-intro',
-    type: 'multiple-choice',
-    question: 'Dropout regularisation works by:',
-    options: [
-      'Removing neurons with the smallest weights',
-      'Randomly setting a fraction of neuron outputs to zero during training',
-      'Clipping the gradient norm to a maximum value',
-      'Adding L2 penalty to the loss function'
-    ],
-    correctIndex: 1,
-    explanation: 'Dropout randomly zeroes neuron outputs with probability p during training, forcing the network to learn redundant representations and reducing co-adaptation of neurons. At inference, all neurons are active and outputs are scaled.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // fourier-analysis (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'fa-1',
-    nodeId: 'fourier-analysis',
-    type: 'multiple-choice',
-    question: 'The Fourier Transform decomposes a signal into:',
-    options: [
-      'A sum of polynomial functions',
-      'A sum of sinusoids of different frequencies',
-      'A product of exponential functions',
-      'A series of step functions'
-    ],
-    correctIndex: 1,
-    explanation: 'The Fourier Transform expresses any (suitable) function as a superposition of complex exponentials (equivalently, sines and cosines) at different frequencies, transforming from the time domain to the frequency domain.'
-  },
-  {
-    id: 'fa-2',
-    nodeId: 'fourier-analysis',
-    type: 'multiple-choice',
-    question: 'The Nyquist–Shannon sampling theorem states that to reconstruct a signal with maximum frequency fₘₐₓ, the sampling rate must be:',
-    options: [
-      'At least fₘₐₓ',
-      'At least 2fₘₐₓ',
-      'Exactly fₘₐₓ',
-      'At least fₘₐₓ/2'
-    ],
-    correctIndex: 1,
-    explanation: 'The Nyquist rate is 2fₘₐₓ. Sampling below this rate causes aliasing — high-frequency components appear as lower frequencies, distorting the reconstructed signal.'
-  },
-  {
-    id: 'fa-3',
-    nodeId: 'fourier-analysis',
-    type: 'multiple-choice',
-    question: 'If a signal is multiplied by a window function before applying the DFT, the main purpose is to:',
-    options: [
-      'Increase the sampling rate',
-      'Reduce spectral leakage caused by finite-length truncation',
-      'Remove the DC component',
-      'Double the frequency resolution'
-    ],
-    correctIndex: 1,
-    explanation: 'Truncating a signal to a finite length is equivalent to multiplying by a rectangular window, which introduces spectral leakage. Smoother windows (Hann, Hamming) taper the signal to zero at the edges, reducing leakage at the cost of reduced frequency resolution.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // graph-theory (3 questions)
+  // game-theory (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
     id: 'gt-1',
-    nodeId: 'graph-theory',
+    nodeId: 'game-theory',
     type: 'multiple-choice',
-    question: 'A connected graph with n vertices and exactly n-1 edges and no cycles is called:',
+    question: 'In the Hawk-Dove game with resource value V and injury cost C (C > V), what is the expected payoff for a Hawk meeting another Hawk?',
     options: [
-      'A complete graph',
-      'A bipartite graph',
-      'A tree',
-      'A DAG'
+      'V',
+      'V/2',
+      '(V - C)/2',
+      '0'
     ],
     correctIndex: 2,
-    explanation: 'A tree is a connected acyclic graph. Any connected graph with n vertices and n-1 edges must be a tree (and vice versa). Trees have exactly one path between any two vertices.'
+    explanation: 'Hawk vs Hawk: each player escalates. One wins (gets V) and the other is injured (costs C). With equal probability: expected payoff = (1/2)·V + (1/2)·(-C) = (V-C)/2. Since C > V, this is negative — Hawks do poorly against other Hawks.'
   },
   {
     id: 'gt-2',
-    nodeId: 'graph-theory',
-    type: 'multiple-choice',
-    question: 'Dijkstra\'s algorithm finds shortest paths in a weighted graph. It requires:',
-    options: [
-      'All edge weights to be equal',
-      'The graph to be a tree',
-      'All edge weights to be non-negative',
-      'The graph to be undirected'
-    ],
-    correctIndex: 2,
-    explanation: 'Dijkstra\'s algorithm uses a greedy approach and fails with negative weights (use Bellman-Ford instead). It works on both directed and undirected graphs as long as all weights are ≥ 0.'
-  },
-  {
-    id: 'gt-3',
-    nodeId: 'graph-theory',
-    type: 'multiple-choice',
-    question: 'A bipartite graph G = (U ∪ V, E) has the property that:',
-    options: [
-      'Every vertex has the same degree',
-      'All edges connect a vertex in U to a vertex in V',
-      'There is a Hamiltonian cycle',
-      'U and V have the same number of vertices'
-    ],
-    correctIndex: 1,
-    explanation: 'In a bipartite graph, vertices are divided into two disjoint sets U and V, and every edge connects a vertex in U to a vertex in V (no edges within U or within V). Equivalently, the graph has no odd-length cycles.'
+    nodeId: 'game-theory',
+    type: 'calculation',
+    question: 'In Hawk-Dove with V = 4, C = 8, what is the ESS mixed strategy frequency of Hawks (p* = V/C)?',
+    correctAnswer: 0.5,
+    tolerance: 0.01,
+    explanation: 'When V < C, neither pure strategy is ESS. The mixed ESS has Hawk frequency p* = V/C = 4/8 = 0.5. At p*, W(H, mixed) = W(D, mixed) — no strategy can invade the population.'
   },
 
   // ══════════════════════════════════════════════════════════════
-  // information-theory (3 questions)
+  // ess-analysis (2 questions)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'it-1',
-    nodeId: 'information-theory',
+    id: 'ess-1',
+    nodeId: 'ess-analysis',
     type: 'multiple-choice',
-    question: 'The Shannon entropy H(X) = -Σ p(x) log₂ p(x) measures:',
+    question: 'A strategy I is an ESS (evolutionarily stable strategy) if, for all alternative strategies J ≠ I:',
     options: [
-      'The maximum value of X',
-      'The average amount of information (uncertainty) in X',
-      'The number of possible values of X',
-      'The probability of the most likely outcome'
+      'W(I, I) > W(J, I) OR [W(I, I) = W(J, I) AND W(I, J) > W(J, J)]',
+      'W(J, I) > W(I, I)',
+      'W(I, I) = W(J, J)',
+      'W(I, J) < W(J, I)'
     ],
-    correctIndex: 1,
-    explanation: 'Shannon entropy quantifies the average uncertainty or information content. A uniform distribution maximises entropy; a deterministic outcome has entropy 0.'
+    correctIndex: 0,
+    explanation: 'ESS condition: I is an ESS if for all J ≠ I: either (1) I does strictly better against I than J does (W(I,I) > W(J,I)), or (2) they do equally well against I but I does better against J (W(I,I) = W(J,I) and W(I,J) > W(J,J)). This ensures I cannot be invaded by J.'
   },
   {
-    id: 'it-2',
-    nodeId: 'information-theory',
+    id: 'ess-2',
+    nodeId: 'ess-analysis',
     type: 'multiple-choice',
-    question: 'The KL divergence D_KL(P ‖ Q) measures:',
+    question: 'In Hawk-Dove with V > C (resource exceeds injury cost), which strategy is the ESS?',
     options: [
-      'The symmetric distance between two distributions',
-      'How much one probability distribution differs from a reference distribution',
-      'The maximum entropy between P and Q',
-      'The mutual information of P and Q'
+      'Dove (D)',
+      'Hawk (H)',
+      'Mixed strategy with p = C/V',
+      'No ESS exists'
     ],
     correctIndex: 1,
-    explanation: 'KL divergence D_KL(P‖Q) = Σ p(x) log(p(x)/q(x)) measures the extra bits needed to encode samples from P using a code designed for Q. It is not symmetric: D_KL(P‖Q) ≠ D_KL(Q‖P) in general.'
-  },
-  {
-    id: 'it-3',
-    nodeId: 'information-theory',
-    type: 'multiple-choice',
-    question: 'Mutual information I(X; Y) equals zero if and only if:',
-    options: [
-      'X and Y have the same distribution',
-      'X and Y are independent',
-      'X and Y are identical',
-      'H(X) = H(Y)'
-    ],
-    correctIndex: 1,
-    explanation: 'I(X;Y) = H(X) - H(X|Y) = 0 iff knowing Y gives no information about X, i.e., X and Y are statistically independent.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // bayesian-inference (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'bi-1',
-    nodeId: 'bayesian-inference',
-    type: 'multiple-choice',
-    question: 'Bayes\' theorem relates the posterior P(H|D) to:',
-    options: [
-      'Only the likelihood P(D|H)',
-      'The likelihood P(D|H) and the prior P(H), normalised by P(D)',
-      'The sample size only',
-      'The frequentist p-value'
-    ],
-    correctIndex: 1,
-    explanation: 'Bayes\' theorem: P(H|D) = P(D|H)·P(H) / P(D). The posterior combines the likelihood (how well H explains D) with the prior (belief before seeing D), normalised by the marginal likelihood P(D).'
-  },
-  {
-    id: 'bi-2',
-    nodeId: 'bayesian-inference',
-    type: 'multiple-choice',
-    question: 'A conjugate prior is one where:',
-    options: [
-      'Prior and likelihood are from the same family',
-      'The posterior is in the same distribution family as the prior',
-      'The prior is uniform over all values',
-      'The prior has zero variance'
-    ],
-    correctIndex: 1,
-    explanation: 'A conjugate prior gives a posterior in the same parametric family, making updates analytically tractable. Example: a Beta prior with a Binomial likelihood yields a Beta posterior.'
-  },
-  {
-    id: 'bi-3',
-    nodeId: 'bayesian-inference',
-    type: 'multiple-choice',
-    question: 'Markov Chain Monte Carlo (MCMC) is used in Bayesian inference to:',
-    options: [
-      'Compute the prior distribution analytically',
-      'Sample from the posterior distribution when it cannot be computed in closed form',
-      'Maximise the likelihood function',
-      'Select the best model by cross-validation'
-    ],
-    correctIndex: 1,
-    explanation: 'MCMC (e.g. Metropolis-Hastings, NUTS) constructs a Markov chain whose stationary distribution is the target posterior. This enables sampling-based inference when the posterior is intractable.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // stochastic-processes (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'sp-1',
-    nodeId: 'stochastic-processes',
-    type: 'multiple-choice',
-    question: 'A Poisson process with rate λ has inter-arrival times that follow:',
-    options: [
-      'A normal distribution with mean 1/λ',
-      'An exponential distribution with mean 1/λ',
-      'A uniform distribution on (0, λ)',
-      'A geometric distribution with parameter λ'
-    ],
-    correctIndex: 1,
-    explanation: 'The Poisson process is the continuous-time counting process with exponentially distributed inter-arrival times (mean 1/λ). The number of arrivals in time t follows Poisson(λt).'
-  },
-  {
-    id: 'sp-2',
-    nodeId: 'stochastic-processes',
-    type: 'multiple-choice',
-    question: 'Standard Brownian motion W(t) has increments W(t) - W(s) (for t > s) that are:',
-    options: [
-      'Uniformly distributed on (-1, 1)',
-      'Normally distributed with mean 0 and variance t - s',
-      'Exponentially distributed with rate 1/(t-s)',
-      'Poisson distributed with mean t - s'
-    ],
-    correctIndex: 1,
-    explanation: 'Brownian motion (Wiener process) has independent, stationary Gaussian increments: W(t)-W(s) ~ N(0, t-s). Its paths are continuous but nowhere differentiable.'
-  },
-  {
-    id: 'sp-3',
-    nodeId: 'stochastic-processes',
-    type: 'multiple-choice',
-    question: 'A stationary stochastic process has statistical properties that:',
-    options: [
-      'Change exponentially over time',
-      'Do not change over time (time-invariant)',
-      'Depend on the starting state',
-      'Must follow a Gaussian distribution'
-    ],
-    correctIndex: 1,
-    explanation: '(Wide-sense) stationarity requires that the mean is constant and the autocovariance depends only on the lag τ, not on absolute time. This enables frequency-domain analysis via the power spectral density.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // pca-and-svd (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'pca-1',
-    nodeId: 'pca-and-svd',
-    type: 'multiple-choice',
-    question: 'Principal Component Analysis (PCA) finds directions that:',
-    options: [
-      'Minimise the variance of projected data',
-      'Maximise the variance of projected data',
-      'Maximise the correlation between components',
-      'Minimise the number of features'
-    ],
-    correctIndex: 1,
-    explanation: 'PCA finds orthogonal directions (principal components) that successively maximise variance. The first PC explains the most variance, the second (orthogonal to the first) explains the next most, and so on.'
-  },
-  {
-    id: 'pca-2',
-    nodeId: 'pca-and-svd',
-    type: 'multiple-choice',
-    question: 'In the SVD A = UΣVᵀ, the columns of U are:',
-    options: [
-      'The right singular vectors of A',
-      'The singular values of A',
-      'The left singular vectors of A',
-      'The eigenvectors of A'
-    ],
-    correctIndex: 2,
-    explanation: 'In A = UΣVᵀ: U contains the left singular vectors (orthonormal basis for the column space), Σ contains singular values (non-negative, on the diagonal), and V contains the right singular vectors.'
-  },
-  {
-    id: 'pca-3',
-    nodeId: 'pca-and-svd',
-    type: 'multiple-choice',
-    question: 'If we keep only the top k singular values in SVD, the resulting matrix is:',
-    options: [
-      'The exact matrix A',
-      'The rank-k matrix that best approximates A in terms of Frobenius norm',
-      'The inverse of A',
-      'The transpose of A'
-    ],
-    correctIndex: 1,
-    explanation: 'By the Eckart-Young theorem, the rank-k truncated SVD Aₖ = UₖΣₖVₖᵀ gives the best rank-k approximation of A (minimising both Frobenius and spectral norm error). This is the basis for dimensionality reduction and compression.'
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // model-selection (3 questions)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'ms-1',
-    nodeId: 'model-selection',
-    type: 'multiple-choice',
-    question: 'Overfitting occurs when a model:',
-    options: [
-      'Is too simple to capture patterns in the training data',
-      'Learns noise in the training data and performs poorly on new data',
-      'Has too few parameters to converge',
-      'Has equal training and test error'
-    ],
-    correctIndex: 1,
-    explanation: 'An overfit model has low training error but high test error — it has memorised the training data including noise, rather than learning the underlying pattern. Remedies include regularisation, dropout, more data, or simpler models.'
-  },
-  {
-    id: 'ms-2',
-    nodeId: 'model-selection',
-    type: 'multiple-choice',
-    question: 'k-fold cross-validation works by:',
-    options: [
-      'Training k separate models on different datasets',
-      'Splitting data into k folds, training on k-1 and validating on the remaining fold, rotating k times',
-      'Using k as the regularisation hyperparameter',
-      'Repeating training k times with different random seeds'
-    ],
-    correctIndex: 1,
-    explanation: 'k-fold CV partitions data into k equal folds. Each fold is used once as the validation set while the other k-1 folds form the training set. The k validation scores are averaged to estimate generalisation performance.'
-  },
-  {
-    id: 'ms-3',
-    nodeId: 'model-selection',
-    type: 'multiple-choice',
-    question: 'The Akaike Information Criterion (AIC) penalises models for:',
-    options: [
-      'Low training accuracy',
-      'Having more parameters (complexity)',
-      'Non-linear relationships',
-      'Missing data'
-    ],
-    correctIndex: 1,
-    explanation: 'AIC = 2k − 2ln(L̂), where k is the number of parameters and L̂ is the maximised likelihood. AIC balances goodness of fit against model complexity — lower AIC is preferred. BIC applies a stronger penalty for parameters.'
+    explanation: 'When V > C: W(H,H) = (V-C)/2 > 0 = W(D,H). Since Hawk does better against Hawk than Dove does, pure Hawk is ESS. Intuitively, when the resource is worth more than the fight cost, aggression always pays.'
   }
 ];
 
-export function getQuestionsByNode(nodeId: string): Question[] {
+// Helper: get questions for a specific node
+export function getQuestionsForNode(nodeId: string): Question[] {
   return questionBank.filter(q => q.nodeId === nodeId);
 }
