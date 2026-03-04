@@ -1,131 +1,107 @@
-import { useState, useMemo } from 'react';
-import { useApp } from '../context/AppContext';
-import { questionBank } from '../data/questions';
+import { useState, useCallback } from 'react';
+import { Question } from '../types';
 import QuizQuestion from './QuizQuestion';
-import type { Question } from '../types';
+import { CheckCircle, XCircle, RotateCcw, Trophy } from 'lucide-react';
 
-interface QuizProps {
-  nodeId: string;
-  onClose: () => void;
+interface Props {
+  questions: Question[];
+  onComplete?: (score: number, total: number) => void;
 }
 
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
+const PASS_THRESHOLD = 0.8;
 
-export default function Quiz({ nodeId, onClose }: QuizProps) {
-  const { startQuiz, completeQuiz } = useApp();
-
-  const questions: Question[] = useMemo(() => {
-    const nodeQs = questionBank.filter(q => q.nodeId === nodeId);
-    return shuffle(nodeQs).slice(0, 5);
-  }, [nodeId]);
-
-  const [started, setStarted] = useState(false);
-  const [qIndex, setQIndex] = useState(0);
-  const [results, setResults] = useState<boolean[]>([]);
+export default function Quiz({ questions, onComplete }: Props) {
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [revealed, setRevealed] = useState(false);
+  const [answers, setAnswers] = useState<(number | null)[]>(Array(questions.length).fill(null));
   const [finished, setFinished] = useState(false);
 
-  function handleStart() {
-    startQuiz(nodeId);
-    setStarted(true);
-  }
+  const q = questions[current];
+  const score = answers.filter((a, i) => a === questions[i].answer).length;
+  const passed = score / questions.length >= PASS_THRESHOLD;
 
-  function handleAnswer(correct: boolean) {
-    const newResults = [...results, correct];
-    setResults(newResults);
-    if (qIndex + 1 >= questions.length) {
-      // Quiz done
-      const correct_count = newResults.filter(Boolean).length;
-      const score = correct_count / questions.length;
-      completeQuiz(nodeId, score, correct_count, questions.length);
+  const handleSelect = (i: number) => setSelected(i);
+
+  const handleReveal = () => {
+    if (selected === null) return;
+    setRevealed(true);
+    const newAnswers = [...answers];
+    newAnswers[current] = selected;
+    setAnswers(newAnswers);
+  };
+
+  const handleNext = useCallback(() => {
+    if (current + 1 >= questions.length) {
       setFinished(true);
+      onComplete?.(score, questions.length);
     } else {
-      setQIndex(qIndex + 1);
+      setCurrent(c => c + 1);
+      setSelected(null);
+      setRevealed(false);
     }
-  }
+  }, [current, questions.length, score, onComplete]);
 
-  if (questions.length === 0) {
-    return (
-      <div className="p-4 text-sm text-zinc-500 text-center py-8">
-        No questions available for this node yet.
-      </div>
-    );
-  }
-
-  if (!started) {
-    return (
-      <div className="p-4 flex flex-col gap-3">
-        <p className="text-sm text-zinc-300">
-          This quiz has <span className="text-indigo-400 font-medium">{questions.length} questions</span>.
-          Pass rate is 70%. Master with 90%+ on two attempts.
-        </p>
-        <button
-          onClick={handleStart}
-          className="w-full py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-sm font-medium text-white transition-colors"
-        >
-          Start Quiz
-        </button>
-        <button
-          onClick={onClose}
-          className="w-full py-1.5 rounded bg-white/[0.04] hover:bg-white/[0.08] text-sm text-zinc-500 transition-colors"
-        >
-          Cancel
-        </button>
-      </div>
-    );
-  }
+  const handleReset = () => {
+    setCurrent(0); setSelected(null); setRevealed(false);
+    setAnswers(Array(questions.length).fill(null)); setFinished(false);
+  };
 
   if (finished) {
-    const correct = results.filter(Boolean).length;
-    const score = correct / questions.length;
-    const pct = Math.round(score * 100);
-    const passed = score >= 0.7;
-
     return (
-      <div className="p-4 flex flex-col gap-4">
-        <div className={`text-center py-4 rounded ${
-          passed ? 'bg-emerald-950/50' : 'bg-red-950/30'
-        }`}>
-          <div className={`text-3xl font-bold ${passed ? 'text-emerald-400' : 'text-red-400'}`}>
-            {pct}%
-          </div>
-          <div className={`text-sm mt-1 ${passed ? 'text-emerald-300' : 'text-red-300'}`}>
-            {passed ? '✓ Passed' : '✗ Not passed (need 70%)'}
-          </div>
-          <div className="text-xs text-zinc-500 mt-1">{correct}/{questions.length} correct</div>
-        </div>
-
-        {results.map((r, i) => (
-          <div key={i} className={`flex items-center gap-2 text-xs ${
-            r ? 'text-emerald-400' : 'text-red-400'
-          }`}>
-            <span>{r ? '✓' : '✗'}</span>
-            <span className="text-zinc-500 truncate">Q{i+1}: {questions[i].question.slice(0, 60)}...</span>
-          </div>
-        ))}
-
-        <button
-          onClick={onClose}
-          className="w-full py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-sm font-medium text-white transition-colors"
-        >
-          Back to Node
+      <div style={{ textAlign: 'center', padding: '40px 20px' }} className="animate-fade-in">
+        <Trophy size={48} color={passed ? 'var(--success)' : 'var(--warning)'} style={{ marginBottom: '16px' }} />
+        <h2 style={{ fontSize: '24px', marginBottom: '8px' }}>{passed ? 'Test Passed!' : 'Keep Practising'}</h2>
+        <p style={{ fontSize: '32px', fontWeight: 700, color: passed ? 'var(--success)' : 'var(--warning)', marginBottom: '8px' }}>
+          {score}/{questions.length}
+        </p>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
+          {Math.round(score/questions.length*100)}% correct — need {Math.round(PASS_THRESHOLD*100)}% to pass
+        </p>
+        <button onClick={handleReset} style={btnStyle}>
+          <RotateCcw size={16} /> Try Again
         </button>
       </div>
     );
   }
 
   return (
-    <QuizQuestion
-      question={questions[qIndex]}
-      onAnswer={handleAnswer}
-      questionNumber={qIndex + 1}
-      total={questions.length}
-    />
+    <div>
+      {/* Progress */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Question {current+1} of {questions.length}</span>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          {questions.map((_, i) => (
+            <div key={i} style={{
+              width: 8, height: 8, borderRadius: '50%',
+              background: i < current
+                ? (answers[i] === questions[i].answer ? 'var(--success)' : 'var(--danger)')
+                : i === current ? 'var(--accent-primary)' : 'var(--border-color)',
+            }} />
+          ))}
+        </div>
+      </div>
+
+      <QuizQuestion question={q} selected={selected} onSelect={handleSelect} revealed={revealed} />
+
+      <div style={{ display: 'flex', gap: '10px', marginTop: '24px', justifyContent: 'flex-end' }}>
+        {!revealed ? (
+          <button onClick={handleReveal} disabled={selected === null} style={{ ...btnStyle, opacity: selected === null ? 0.5 : 1 }}>
+            <CheckCircle size={16} /> Check
+          </button>
+        ) : (
+          <button onClick={handleNext} style={btnStyle}>
+            {current+1 < questions.length ? 'Next →' : 'Finish'}
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
+
+const btnStyle: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', gap: '6px',
+  padding: '8px 18px', borderRadius: '8px',
+  background: 'var(--accent-primary)', border: 'none',
+  color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+};

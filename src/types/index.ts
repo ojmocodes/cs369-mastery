@@ -1,94 +1,56 @@
-export interface TreeNode {
+export interface Node {
   id: string;
   label: string;
-  tier: string;
-  description: string;
-  topics: string[];
-  prerequisites: string[];
-  source?: string;
-  exam_questions?: string[];
+  group: string;
+  mastered: boolean;
+  description?: string;
 }
 
-export interface TreeEdge {
+export interface Link {
   source: string;
   target: string;
+  strength: number;
 }
 
-export interface Tier {
+export interface Question {
   id: string;
-  label: string;
-  order: number;
-  color: string;
-}
-
-export interface TreeData {
-  course: string;
-  title: string;
-  version: string;
-  description: string;
-  tiers: Tier[];
-  nodes: TreeNode[];
-  edges: TreeEdge[];
+  topic: string;
+  question: string;
+  options: string[];
+  answer: number;
+  explanation: string;
 }
 
 export interface ExamQuestion {
   id: string;
-  label: string;
-  description?: string;
+  section: 'A' | 'B' | 'C';
+  marks: number;
+  topic: string;
+  type: 'short' | 'calculation' | 'essay';
+  question: string;
+  modelAnswer: string;
+  markingGuide: string;
 }
 
-export type NodeStatus = 'locked' | 'unlocked' | 'in-progress' | 'passed' | 'mastered';
-
-export interface NodeProgress {
-  nodeId: string;
-  status: NodeStatus;
-  attempts: number;
-  lastAttempt?: string; // ISO date
-  passedAt?: string;   // ISO date
-  masteredAt?: string; // ISO date
-  score?: number;      // Last quiz score (0-1)
-  bestScore?: number;  // Best score ever
+export interface CourseConfig {
+  id: string;
+  name: string;
+  fullName: string;
+  description: string;
+  color: string;
+  nodes: Node[];
+  links: Link[];
+  questions: Question[];
+  examQuestions: ExamQuestion[];
 }
+
+export type CourseRegistry = Record<string, CourseConfig>;
 
 export interface AppState {
-  progress: Record<string, NodeProgress>;
-  streak: number;
-  lastActivityDate?: string;
-  totalQuizzes: number;
-  totalCorrect: number;
-}
-
-export type Question =
-  | MultipleChoiceQuestion
-  | ShortAnswerQuestion
-  | CalculationQuestion;
-
-export interface MultipleChoiceQuestion {
-  id: string;
-  nodeId: string;
-  type: 'multiple-choice';
-  question: string;
-  options: string[];
-  correctIndex: number;
-  explanation: string;
-}
-
-export interface ShortAnswerQuestion {
-  id: string;
-  nodeId: string;
-  type: 'short-answer';
-  question: string;
-  acceptableAnswers: string[];
-  explanation: string;
-}
-
-export interface CalculationQuestion {
-  id: string;
-  nodeId: string;
-  type: 'calculation';
-  question: string;
-  correctAnswer: number;
-  tolerance: number;
-  unit?: string;
-  explanation: string;
+  activeCourseId: string | null;
+  masteredNodes: Record<string, boolean>;
+  setActiveCourse: (id: string) => void;
+  toggleMastered: (nodeId: string) => void;
+  isMastered: (nodeId: string) => boolean;
+  getMasteryPercent: (courseId: string) => number;
 }

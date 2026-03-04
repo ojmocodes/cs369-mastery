@@ -1,87 +1,21 @@
-import type { TreeNode, NodeStatus, NodeProgress } from '../types';
-import { treeData } from '../data/tree';
+import { Node, Link } from '../types';
 
-/**
- * Determine the status of a node given current progress state.
- * A node is unlocked if all prerequisites are passed or mastered.
- */
-export function getNodeStatus(
-  nodeId: string,
-  progress: Record<string, NodeProgress>
-): NodeStatus {
-  const nodeProgress = progress[nodeId];
-  if (nodeProgress) return nodeProgress.status;
-
-  const node = treeData.nodes.find(n => n.id === nodeId);
-  if (!node) return 'locked';
-
-  const allPrereqsMet = node.prerequisites.every(prereqId => {
-    const p = progress[prereqId];
-    return p && (p.status === 'passed' || p.status === 'mastered');
-  });
-
-  return allPrereqsMet ? 'unlocked' : 'locked';
+export function getConnectedNodes(nodeId: string, links: Link[]): string[] {
+  return links
+    .filter(l => l.source === nodeId || l.target === nodeId)
+    .map(l => l.source === nodeId ? l.target : l.source) as string[];
 }
 
-/**
- * Get all nodes that are currently available to start (unlocked or in-progress).
- */
-export function getAvailableNodes(
-  progress: Record<string, NodeProgress>
-): TreeNode[] {
-  return treeData.nodes.filter(node => {
-    const status = getNodeStatus(node.id, progress);
-    return status === 'unlocked' || status === 'in-progress';
-  });
+export function getMasteryStats(nodes: Node[], masteredMap: Record<string, boolean>) {
+  const total = nodes.length;
+  const mastered = nodes.filter(n => masteredMap[n.id]).length;
+  return { total, mastered, percent: total > 0 ? Math.round(mastered / total * 100) : 0 };
 }
 
-/**
- * Get all nodes that are locked.
- */
-export function getLockedNodes(
-  progress: Record<string, NodeProgress>
-): TreeNode[] {
-  return treeData.nodes.filter(node => getNodeStatus(node.id, progress) === 'locked');
-}
-
-/**
- * Get all nodes that have been passed or mastered.
- */
-export function getCompletedNodes(
-  progress: Record<string, NodeProgress>
-): TreeNode[] {
-  return treeData.nodes.filter(node => {
-    const status = getNodeStatus(node.id, progress);
-    return status === 'passed' || status === 'mastered';
-  });
-}
-
-/**
- * Get nodes that are direct prerequisites of the given node.
- */
-export function getPrerequisites(nodeId: string): TreeNode[] {
-  const node = treeData.nodes.find(n => n.id === nodeId);
-  if (!node) return [];
-  return node.prerequisites
-    .map(id => treeData.nodes.find(n => n.id === id))
-    .filter((n): n is TreeNode => n !== undefined);
-}
-
-/**
- * Get nodes that are directly unlocked by the given node.
- */
-export function getUnlockedBy(nodeId: string): TreeNode[] {
-  return treeData.nodes.filter(n => n.prerequisites.includes(nodeId));
-}
-
-/**
- * Calculate overall mastery percentage.
- */
-export function getMasteryPercentage(
-  progress: Record<string, NodeProgress>
-): number {
-  const total = treeData.nodes.length;
-  if (total === 0) return 0;
-  const completed = getCompletedNodes(progress).length;
-  return Math.round((completed / total) * 100);
+export function groupNodes(nodes: Node[]): Record<string, Node[]> {
+  return nodes.reduce((acc, n) => {
+    if (!acc[n.group]) acc[n.group] = [];
+    acc[n.group].push(n);
+    return acc;
+  }, {} as Record<string, Node[]>);
 }
