@@ -1,100 +1,268 @@
-import { useEffect, useRef, useState } from 'react';
-import * as d3 from 'd3';
-import { Node, Link } from '../types';
-import { useAppContext } from '../context/AppContext';
-import NodeDetail from './NodeDetail';
+import { useMemo, useCallback } from 'react';
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  type Node,
+  type Edge,
+  type NodeProps,
+  Handle,
+  Position,
+  MarkerType,
+} from '@xyflow/react';
+// @ts-ignore - CSS import handled by Vite
+import '@xyflow/react/dist/style.css';
+import type { TreeData, NodeStatus } from '../types';
+import { useAppState } from '../context/AppContext';
+import { getTierColor } from '../utils/treeUtils';
 
-interface SimNode extends d3.SimulationNodeDatum { id: string; label: string; group: string; mastered: boolean; description?: string; }
-interface SimLink extends d3.SimulationLinkDatum<SimNode> { strength: number; }
+// ─── Layout computation ──────────────────────────────────────────
 
-const GROUP_COLORS: Record<string, string> = {
-  foundations:   '#7c3aed',
-  sequences:     '#2563eb',
-  prob_models:   '#0891b2',
-  subst_models:  '#059669',
-  phylogenetics: '#d97706',
-  mol_evolution: '#dc2626',
-  struct_func:   '#7c3aed',
-};
+interface LayoutNode {
+  id: string;
+  tier: string;
+  tierOrder: number;
+  label: string;
+}
 
-interface Props { nodes: Node[]; links: Link[]; }
+function computeLayout(nodes: LayoutNode[], treeData: TreeData): Record<string, { x: number; y: number }> {
+  // Group by tier order
+  const tierGroups: Record<number, LayoutNode[]> = {};
+  for (const n of nodes) {
+    if (!tierGroups[n.tierOrder]) tierGroups[n.tierOrder] = [];
+    tierGroups[n.tierOrder].push(n);
+  }
 
-export default function TreeGraph({ nodes, links }: Props) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const { isMastered } = useAppContext();
+  const positions: Record<string, { x: number; y: number }> = {};
+  const nodeWidth = 180;
+  const nodeHeight = 50;
+  const xGap = 20;
+  const yGap = 110;
 
-  useEffect(() => {
-    if (!svgRef.current) return;
-    const el = svgRef.current;
-    const W = el.clientWidth || 900;
-    const H = el.clientHeight || 600;
+  // Build a topological sort-based ordering per tier
+  // Use adjacency to group related nodes together within tiers
+  const tierOrders = Object.keys(tierGroups).map(Number).sort();
 
-    d3.select(el).selectAll('*').remove();
+  for (const tierIdx of tierOrders) {
+    const group = tierGroups[tierIdx];
 
-    const simNodes: SimNode[] = nodes.map(n => ({ ...n }));
-    const nodeMap = new Map(simNodes.map(n => [n.id, n]));
-    const simLinks: SimLink[] = links
-      .filter(l => nodeMap.has(l.source as string) && nodeMap.has(l.target as string))
-      .map(l => ({ source: l.source as string, target: l.target as string, strength: l.strength }));
+    // Sort within tier: try to keep nodes near their prerequisites/children
+    // Use a simple heuristic: order by the average x position of prerequisites
+    group.sort((a, b) => {
+      const aPrereqs = treeData.nodes.find(n => n.id === a.id)?.prerequisites || [];
+      const bPrereqs = treeData.nodes.find(n => n.id === b.id)?.prerequisites || [];
 
-    const svg = d3.select(el)
-      .attr('width', W).attr('height', H)
-      .call(d3.zoom<SVGSVGElement, unknown>().scaleExtent([0.3, 3]).on('zoom', e => g.attr('transform', e.transform)))
-      .append('g');
-    const g = svg;
+      // Get positions of prereqs (from previous tiers)
+      const aAvgX = aPrereqs.reduce((sum, pre) => sum + (positions[pre]?.x ?? 0), 0) / Math.max(aPrereqs.length, 1);
+      const bAvgX = bPrereqs.reduce((sum, pre) => sum + (positions[pre]?.x ?? 0), 0) / Math.max(bPrereqs.length, 1);
 
-    const sim = d3.forceSimulation<SimNode>(simNodes)
-      .force('link', d3.forceLink<SimNode, SimLink>(simLinks).id(d => d.id).distance(d => 120 - d.strength * 40).strength(d => d.strength * 0.3))
-      .force('charge', d3.forceManyBody().strength(-280))
-      .force('center', d3.forceCenter(W/2, H/2))
-      .force('collision', d3.forceCollide(32));
-
-    const link = g.selectAll('.link').data(simLinks).join('line')
-      .attr('class', 'link')
-      .attr('stroke', '#1e293b')
-      .attr('stroke-width', d => d.strength * 2.5)
-      .attr('stroke-opacity', d => 0.3 + d.strength * 0.5);
-
-    const nodeG = g.selectAll('.node').data(simNodes).join('g')
-      .attr('class', 'node')
-      .style('cursor', 'pointer')
-      .call(d3.drag<SVGGElement, SimNode>()
-        .on('start', (event, d) => { if (!event.active) sim.alphaTarget(0.3).restart(); d.fx=d.x; d.fy=d.y; })
-        .on('drag', (event, d) => { d.fx=event.x; d.fy=event.y; })
-        .on('end', (event, d) => { if (!event.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }))
-      .on('click', (_, d) => setSelectedNode({ id: d.id, label: d.label, group: d.group, mastered: isMastered(d.id), description: d.description }));
-
-    nodeG.append('circle')
-      .attr('r', 14)
-      .attr('fill', d => {
-        const col = GROUP_COLORS[d.group] ?? '#7c3aed';
-        return isMastered(d.id) ? '#10b981' : col + '33';
-      })
-      .attr('stroke', d => isMastered(d.id) ? '#10b981' : (GROUP_COLORS[d.group] ?? '#7c3aed'))
-      .attr('stroke-width', 2);
-
-    nodeG.append('text')
-      .attr('dy', 26)
-      .attr('text-anchor', 'middle')
-      .style('font-size', '10px')
-      .style('fill', 'var(--text-secondary)')
-      .style('pointer-events', 'none')
-      .text(d => d.label.length > 20 ? d.label.slice(0, 18) + '…' : d.label);
-
-    sim.on('tick', () => {
-      link.attr('x1', d => (d.source as SimNode).x!).attr('y1', d => (d.source as SimNode).y!)
-          .attr('x2', d => (d.target as SimNode).x!).attr('y2', d => (d.target as SimNode).y!);
-      nodeG.attr('transform', d => `translate(${d.x},${d.y})`);
+      return aAvgX - bAvgX;
     });
 
-    return () => { sim.stop(); };
-  }, [nodes, links, isMastered]);
+    const totalWidth = group.length * (nodeWidth + xGap) - xGap;
+    const startX = -totalWidth / 2;
+
+    for (let i = 0; i < group.length; i++) {
+      positions[group[i].id] = {
+        x: startX + i * (nodeWidth + xGap),
+        y: tierIdx * (nodeHeight + yGap),
+      };
+    }
+  }
+
+  return positions;
+}
+
+// ─── Custom node component ──────────────────────────────────────
+
+interface CustomNodeData {
+  label: string;
+  status: NodeStatus;
+  tier: string;
+  treeData: TreeData;
+  [key: string]: unknown;
+}
+
+function CustomNode({ data }: NodeProps<Node<CustomNodeData>>) {
+  const { label, status, tier, treeData } = data;
+  const tierColor = getTierColor(tier, treeData);
+
+  const bgColor = {
+    locked: '#1a1a24',
+    unlocked: '#1a1a24',
+    'in-progress': '#1a1a24',
+    passed: tierColor + '20',
+    mastered: '#292520',
+  }[status];
+
+  const borderColor = {
+    locked: 'rgba(255,255,255,0.04)',
+    unlocked: tierColor + '60',
+    'in-progress': tierColor,
+    passed: tierColor + '80',
+    mastered: '#f59e0b80',
+  }[status];
+
+  const textColor = {
+    locked: '#52525b',
+    unlocked: '#d4d4d8',
+    'in-progress': '#e4e4e7',
+    passed: '#e4e4e7',
+    mastered: '#fbbf24',
+  }[status];
+
+  const isPulsing = status === 'in-progress';
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <svg ref={svgRef} style={{ width: '100%', height: '100%' }} />
-      <NodeDetail node={selectedNode} onClose={() => setSelectedNode(null)} />
+    <>
+      <Handle type="target" position={Position.Top} className="!bg-transparent !border-0 !w-2 !h-2" />
+      <div
+        className={`px-3 py-2 rounded-lg border cursor-pointer transition-all hover:brightness-110 ${
+          isPulsing ? 'animate-pulse-border' : ''
+        }`}
+        style={{
+          backgroundColor: bgColor,
+          borderColor: borderColor,
+          borderWidth: status === 'in-progress' ? 2 : 1,
+          minWidth: 160,
+          maxWidth: 180,
+        }}
+      >
+        <div className="flex items-center gap-2">
+          {/* Status icon */}
+          <span className="shrink-0 text-xs">
+            {status === 'locked' && (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#52525b" stroke="none">
+                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" fill="none" stroke="#52525b" strokeWidth="2"/>
+              </svg>
+            )}
+            {status === 'passed' && (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={tierColor} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            )}
+            {status === 'mastered' && <span className="text-amber-400">★</span>}
+            {status === 'unlocked' && (
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tierColor }} />
+            )}
+            {status === 'in-progress' && (
+              <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: tierColor }} />
+            )}
+          </span>
+          {/* Label */}
+          <span
+            className="text-xs font-medium leading-tight"
+            style={{ color: textColor }}
+          >
+            {label}
+          </span>
+        </div>
+      </div>
+      <Handle type="source" position={Position.Bottom} className="!bg-transparent !border-0 !w-2 !h-2" />
+    </>
+  );
+}
+
+const nodeTypes = { custom: CustomNode };
+
+// ─── Main TreeGraph ─────────────────────────────────────────────
+
+interface TreeGraphProps {
+  treeData: TreeData;
+  courseId: string;
+  onSelectNode: (nodeId: string) => void;
+  selectedNodeId: string | null;
+}
+
+export default function TreeGraph({ treeData, courseId, onSelectNode, selectedNodeId }: TreeGraphProps) {
+  const { state } = useAppState();
+  const nodeProgress = state.courses[courseId]?.nodeProgress ?? {};
+
+  // Build layout
+  const layoutNodes = useMemo(() => {
+    return treeData.nodes.map(n => {
+      const tier = treeData.tiers.find(t => t.id === n.tier);
+      return {
+        id: n.id,
+        tier: n.tier,
+        tierOrder: tier?.order ?? 0,
+        label: n.label,
+      };
+    });
+  }, [treeData]);
+
+  const positions = useMemo(() => computeLayout(layoutNodes, treeData), [layoutNodes, treeData]);
+
+  // React Flow nodes
+  const flowNodes: Node<CustomNodeData>[] = useMemo(() => {
+    return treeData.nodes.map(n => {
+      const pos = positions[n.id] || { x: 0, y: 0 };
+      const status = nodeProgress[n.id]?.status || 'locked';
+      return {
+        id: n.id,
+        type: 'custom',
+        position: pos,
+        data: {
+          label: n.label,
+          status,
+          tier: n.tier,
+          treeData,
+        },
+        selected: n.id === selectedNodeId,
+      };
+    });
+  }, [positions, nodeProgress, selectedNodeId, treeData]);
+
+  // React Flow edges
+  const flowEdges: Edge[] = useMemo(() => {
+    return treeData.edges.map((e, i) => {
+      const fromStatus = nodeProgress[e.from]?.status || 'locked';
+      const isActive = fromStatus === 'passed' || fromStatus === 'mastered';
+      return {
+        id: `edge-${i}`,
+        source: e.from,
+        target: e.to,
+        type: 'smoothstep',
+        animated: isActive,
+        style: {
+          stroke: isActive ? '#6366f1' : 'rgba(255,255,255,0.06)',
+          strokeWidth: isActive ? 1.5 : 1,
+        },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: isActive ? '#6366f1' : 'rgba(255,255,255,0.08)',
+          width: 15,
+          height: 15,
+        },
+      };
+    });
+  }, [treeData, nodeProgress]);
+
+  const handleNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    onSelectNode(node.id);
+  }, [onSelectNode]);
+
+  return (
+    <div className="w-full h-full">
+      <ReactFlow
+        nodes={flowNodes}
+        edges={flowEdges}
+        nodeTypes={nodeTypes}
+        onNodeClick={handleNodeClick}
+        fitView
+        fitViewOptions={{ padding: 0.15 }}
+        minZoom={0.2}
+        maxZoom={2}
+        proOptions={{ hideAttribution: true }}
+        defaultEdgeOptions={{ type: 'smoothstep' }}
+      >
+        <Background color="rgba(255,255,255,0.02)" gap={20} />
+        <Controls
+          showInteractive={false}
+          className="!bg-[#1e1e28] !border-white/[0.06] !shadow-xl [&>button]:!bg-[#1e1e28] [&>button]:!border-white/[0.06] [&>button]:!text-zinc-400 [&>button:hover]:!bg-white/[0.06]"
+        />
+      </ReactFlow>
     </div>
   );
 }

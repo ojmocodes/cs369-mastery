@@ -1,107 +1,153 @@
 import { useState, useCallback } from 'react';
-import { Question } from '../types';
+import type { Question } from '../types';
+import { getQuestionsForNode } from '../data/courses/compsci369/questions';
+import { useAppState } from '../context/AppContext';
 import QuizQuestion from './QuizQuestion';
-import { CheckCircle, XCircle, RotateCcw, Trophy } from 'lucide-react';
 
-interface Props {
-  questions: Question[];
-  onComplete?: (score: number, total: number) => void;
+interface QuizProps {
+  nodeId: string;
+  courseId: string;
+  nodeLabel: string;
+  onClose: () => void;
 }
 
-const PASS_THRESHOLD = 0.8;
-
-export default function Quiz({ questions, onComplete }: Props) {
-  const [current, setCurrent] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [revealed, setRevealed] = useState(false);
-  const [answers, setAnswers] = useState<(number | null)[]>(Array(questions.length).fill(null));
+export default function Quiz({ nodeId, courseId, nodeLabel, onClose }: QuizProps) {
+  const { dispatch } = useAppState();
+  const questions = getQuestionsForNode(nodeId);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [answers, setAnswers] = useState<boolean[]>([]);
 
-  const q = questions[current];
-  const score = answers.filter((a, i) => a === questions[i].answer).length;
-  const passed = score / questions.length >= PASS_THRESHOLD;
-
-  const handleSelect = (i: number) => setSelected(i);
-
-  const handleReveal = () => {
-    if (selected === null) return;
-    setRevealed(true);
-    const newAnswers = [...answers];
-    newAnswers[current] = selected;
+  const handleAnswer = useCallback((correct: boolean) => {
+    const newAnswers = [...answers, correct];
     setAnswers(newAnswers);
-  };
 
-  const handleNext = useCallback(() => {
-    if (current + 1 >= questions.length) {
-      setFinished(true);
-      onComplete?.(score, questions.length);
-    } else {
-      setCurrent(c => c + 1);
-      setSelected(null);
-      setRevealed(false);
+    if (correct) {
+      setScore(s => s + 1);
     }
-  }, [current, questions.length, score, onComplete]);
 
-  const handleReset = () => {
-    setCurrent(0); setSelected(null); setRevealed(false);
-    setAnswers(Array(questions.length).fill(null)); setFinished(false);
-  };
+    dispatch({
+      type: 'ANSWER_QUESTION',
+      courseId,
+      nodeId,
+      questionId: questions[currentIndex].id,
+      correct,
+    });
 
-  if (finished) {
+    if (currentIndex + 1 >= questions.length) {
+      const finalScore = correct ? score + 1 : score;
+      setFinished(true);
+      dispatch({
+        type: 'COMPLETE_QUIZ',
+        courseId,
+        nodeId,
+        score: finalScore,
+        total: questions.length,
+      });
+    } else {
+      setCurrentIndex(i => i + 1);
+    }
+  }, [answers, currentIndex, dispatch, courseId, nodeId, questions, score]);
+
+  if (questions.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px 20px' }} className="animate-fade-in">
-        <Trophy size={48} color={passed ? 'var(--success)' : 'var(--warning)'} style={{ marginBottom: '16px' }} />
-        <h2 style={{ fontSize: '24px', marginBottom: '8px' }}>{passed ? 'Test Passed!' : 'Keep Practising'}</h2>
-        <p style={{ fontSize: '32px', fontWeight: 700, color: passed ? 'var(--success)' : 'var(--warning)', marginBottom: '8px' }}>
-          {score}/{questions.length}
-        </p>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-          {Math.round(score/questions.length*100)}% correct — need {Math.round(PASS_THRESHOLD*100)}% to pass
-        </p>
-        <button onClick={handleReset} style={btnStyle}>
-          <RotateCcw size={16} /> Try Again
+      <div className="p-4 space-y-4">
+        <p className="text-sm text-zinc-400">No questions available for this node yet.</p>
+        <button
+          onClick={onClose}
+          className="w-full py-2 rounded-lg text-sm bg-white/[0.06] hover:bg-white/[0.1] text-white transition-colors"
+        >
+          Go Back
         </button>
       </div>
     );
   }
 
-  return (
-    <div>
-      {/* Progress */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Question {current+1} of {questions.length}</span>
-        <div style={{ display: 'flex', gap: '4px' }}>
-          {questions.map((_, i) => (
-            <div key={i} style={{
-              width: 8, height: 8, borderRadius: '50%',
-              background: i < current
-                ? (answers[i] === questions[i].answer ? 'var(--success)' : 'var(--danger)')
-                : i === current ? 'var(--accent-primary)' : 'var(--border-color)',
-            }} />
+  if (finished) {
+    const passThreshold = Math.ceil(questions.length * 0.8);
+    const passed = score >= passThreshold;
+    const mastered = score === questions.length;
+
+    return (
+      <div className="p-4 space-y-4">
+        <div className="text-center space-y-2 py-4">
+          <div className={`text-4xl ${mastered ? 'text-amber-400' : passed ? 'text-emerald-400' : 'text-red-400'}`}>
+            {mastered ? '★' : passed ? '✓' : '✗'}
+          </div>
+          <h3 className="text-lg font-semibold text-white">{nodeLabel}</h3>
+          <p className="text-2xl font-bold text-white">
+            {score} / {questions.length}
+          </p>
+          <p className={`text-sm font-medium ${mastered ? 'text-amber-400' : passed ? 'text-emerald-400' : 'text-red-400'}`}>
+            {mastered ? 'Mastered!' : passed ? 'Passed!' : 'Not quite — try again'}
+          </p>
+        </div>
+
+        {/* Answer summary */}
+        <div className="space-y-1">
+          {answers.map((correct, i) => (
+            <div key={i} className="flex items-center gap-2 text-xs">
+              <span className={correct ? 'text-emerald-400' : 'text-red-400'}>
+                {correct ? '✓' : '✗'}
+              </span>
+              <span className="text-zinc-400 truncate">Q{i + 1}: {questions[i].question.slice(0, 60)}...</span>
+            </div>
           ))}
         </div>
+
+        <div className="space-y-2 pt-2">
+          {!passed && (
+            <button
+              onClick={() => {
+                setCurrentIndex(0);
+                setScore(0);
+                setFinished(false);
+                setAnswers([]);
+              }}
+              className="w-full py-2.5 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+            >
+              Try Again
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="w-full py-2 rounded-lg text-sm bg-white/[0.06] hover:bg-white/[0.1] text-white transition-colors"
+          >
+            Back to Node
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-4">
+      {/* Progress dots */}
+      <div className="flex items-center gap-1 mb-4">
+        {questions.map((_: Question, i: number) => (
+          <div
+            key={i}
+            className={`h-1 flex-1 rounded-full transition-colors ${
+              i < currentIndex
+                ? answers[i]
+                  ? 'bg-emerald-500'
+                  : 'bg-red-500'
+                : i === currentIndex
+                ? 'bg-indigo-500'
+                : 'bg-white/[0.06]'
+            }`}
+          />
+        ))}
       </div>
 
-      <QuizQuestion question={q} selected={selected} onSelect={handleSelect} revealed={revealed} />
-
-      <div style={{ display: 'flex', gap: '10px', marginTop: '24px', justifyContent: 'flex-end' }}>
-        {!revealed ? (
-          <button onClick={handleReveal} disabled={selected === null} style={{ ...btnStyle, opacity: selected === null ? 0.5 : 1 }}>
-            <CheckCircle size={16} /> Check
-          </button>
-        ) : (
-          <button onClick={handleNext} style={btnStyle}>
-            {current+1 < questions.length ? 'Next →' : 'Finish'}
-          </button>
-        )}
-      </div>
+      <QuizQuestion
+        key={questions[currentIndex].id}
+        question={questions[currentIndex]}
+        onAnswer={handleAnswer}
+        questionNumber={currentIndex + 1}
+        totalQuestions={questions.length}
+      />
     </div>
   );
 }
-
-const btnStyle: React.CSSProperties = {
-  display: 'flex', alignItems: 'center', gap: '6px',
-  padding: '8px 18px', borderRadius: '8px',
-  background: 'var(--accent-primary)', border: 'none',
-  color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-};
