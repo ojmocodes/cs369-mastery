@@ -1,32 +1,28 @@
 {
   "name": "cs369-mastery",
   "private": true,
-  "version": "2.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "COMPSCI 369 knowledge tree study tool — master computational science by passing exam-level quizzes",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "build": "vite build",
+    "typecheck": "tsc -b",
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.2.0",
-    "d3": "^7.9.0",
-    "lucide-react": "^0.475.0"
+    "@xyflow/react": "^12.10.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.19.0",
-    "@types/d3": "^7.4.3",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "@vitejs/plugin-react": "^4.3.4",
-    "eslint": "^9.19.0",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.18",
-    "globals": "^15.14.0",
-    "typescript": "~5.7.2",
-    "vite": "^6.1.0"
-  }
+    "@tailwindcss/vite": "^4.2.1",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^5.1.4",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  },
+  "license": "MIT"
 }

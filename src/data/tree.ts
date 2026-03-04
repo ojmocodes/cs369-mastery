@@ -1,3 +1,2 @@
-// Legacy re-export for backward compatibility
-// The actual data now lives in src/data/courses/compsci369/tree.ts
-export { nodes, links } from './courses/compsci369/tree';
+// Re-export from the new location for backward compatibility
+export * from './courses/compsci369/tree';
